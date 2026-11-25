@@ -44,11 +44,10 @@
   <p>Ambos se configuran en Terraform (<code>BEDROCK_MODEL_ID</code>, <code>BEDROCK_AUDIO_MODEL_ID</code>). IAM concede <code>bedrock:InvokeModel</code> solo a esos ARN. Sin id de modelo, el servicio funciona con regex y sin audio.</p>
 
   <h2 id="pipeline">Pipeline de una evaluación</h2>
-  <figure class="image-slot">
-    <img src="assets/img/pipeline-ia.png" alt="Pipeline de evaluación IA y fallback" hidden>
-    <div class="slot-empty"><strong>Pipeline de Evaluación IA y Fallback</strong>Guarda la imagen exportada como <code>assets/img/pipeline-ia.png</code></div>
-    <figcaption>Pipeline de evaluación con IA y fallback regex</figcaption>
-  </figure>
+  <p>Elige un escenario: el paquete recorre el camino real de una evaluación, incluido el fallback.</p>
+  <div class="scene3d" data-scene="pipeline"></div>
+  <p class="s3-note">Las frases y puntajes son ejemplos; los tiempos de la animación no son a escala.</p>
+  <details class="s3-table"><summary>Ver tabla de degradaciones</summary><div class="table-wrap"><table><thead><tr><th>Situación</th><th>Qué ocurre</th><th>Motivo</th></tr></thead><tbody><tr><td>Nova Lite supera 3 s</td><td>Degrada de inmediato a regex</td><td><code>timeout</code></td></tr><tr><td>JSON fuera del esquema</td><td>Un reintento; luego regex</td><td><code>respuesta_invalida</code></td></tr><tr><td>Error del cliente</td><td>Un reintento; luego regex</td><td><code>error_cliente</code></td></tr><tr><td>Sin modelo o texto vacío</td><td>Regex directo, sin marcar degradación</td><td>—</td></tr><tr><td>El LLM responde por debajo de las reglas</td><td>OR de señales y máximo de puntaje</td><td><code>suelo_reglas_aplicado</code></td></tr><tr><td>Más de 30 evaluaciones por minuto</td><td>429 antes de invocar modelos</td><td><code>rate_limited</code></td></tr></tbody></table></div></details>
 
   <h2 id="prompts">Prompts</h2>
   <h3>Transcripción</h3>
@@ -131,5 +130,6 @@ RAZONA PASO A PASO: 1) enumera activos y fronteras, 2) aplica cada letra de STRI
 </div></main>
 <footer class="foot">GuardianMesh · SWNT 2026-2 · Documentación generada desde la rama <code>development</code>.</footer>
 <script src="assets/app.js?v=3"></script>
+<script src="assets/scene3d.js?v=3"></script>
 </body>
 </html>

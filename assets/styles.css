@@ -156,3 +156,13 @@ figure.image-slot figcaption{font-size:.85rem;color:var(--text-2)}
 .c4 figcaption{padding:8px 14px;font-size:.84rem;color:var(--text-2)}
 .c4 svg [data-cell-id]{transition:opacity .15s}.c4 svg .dim{opacity:.13}
 @media (max-width:720px){.s3-stage{aspect-ratio:1/1}.s3-label i,.s3-label.opt{display:none}.s3-label{font-size:.6rem;padding:2px 5px}.s3-steps{font-size:.6rem;left:10px;top:8px;gap:8px;letter-spacing:0}.s3-hint{display:none}.s3-caption{font-size:.8rem}.s3-btn.play{margin-left:0}}
+
+/* Recorridos 3D */
+.s3-btn[aria-pressed=true]:not(.play){background:var(--brand-navy);border-color:var(--brand-navy);color:#fff}.s3-btn[aria-pressed=true]:not(.play) small{color:#C9D6EA}
+.s3-info{padding:14px 18px;border-top:1px solid var(--border);font-size:.9rem}.s3-info:empty{display:none}.s3-info p{margin:0}.s3-info ul+p{margin-top:8px;color:var(--text-2)}
+.s3-info dl{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 20px;margin:0}.s3-info .w{grid-column:span 2}
+.s3-info dt{font-size:.74rem;color:var(--text-3);font-weight:600}.s3-info dd{margin:0;color:var(--text);overflow-wrap:anywhere}
+.s3-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}.s3-chips li{background:var(--ice);border:1px solid var(--primary-light);border-radius:999px;padding:3px 12px;font-size:.84rem}
+.s3-info .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#F59E0B}
+.s3-label.uc{white-space:normal;width:112px;text-align:center;background:none;box-shadow:none;line-height:1.2;transition:opacity .25s}.s3-label.uc.off{opacity:.42}
+@media (max-width:720px){.s3-info dl{grid-template-columns:1fr 1fr}.s3-label.uc{width:auto;font-size:.72rem}.s3-label.nw{white-space:normal;max-width:50px;overflow-wrap:anywhere;text-align:center;line-height:1.1;font-size:.5rem;padding:2px 3px}}

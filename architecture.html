@@ -123,11 +123,8 @@ sequenceDiagram
   <p>Las transiciones de la llamada son condicionales en DynamoDB: gana el primer escritor. Las reglas duras (<code>desafio_fallido</code>, <code>dinero_mas_urgencia</code>, <code>clonacion_vocal</code>, <code>suplantacion_biometrica</code>) fuerzan RED con score 100.</p>
 
   <h2 id="datos">Modelo de datos DynamoDB</h2>
-  <figure class="image-slot">
-    <img src="assets/img/modelo-datos.png" alt="Modelo de datos en DynamoDB" hidden>
-    <div class="slot-empty"><strong>Modelo de Datos en DynamoDB</strong>Guarda la imagen exportada como <code>assets/img/modelo-datos.png</code></div>
-    <figcaption>Modelo de datos en DynamoDB</figcaption>
-  </figure>
+  <p>Toca una tabla para abrirla: verás su clave, índices, TTL y relaciones.</p>
+  <div class="scene3d" data-scene="datos"></div>
   <div class="table-wrap"><table>
     <thead><tr><th>Tabla</th><th>Clave</th><th>Índices</th><th>Contenido</th></tr></thead>
     <tbody>
@@ -140,11 +137,11 @@ sequenceDiagram
     </tbody>
   </table></div>
   <p>Además existen <code>profiles</code> y <code>challenges</code> (módulo <code>data</code>) y las tablas de conexiones de avisos y de monitoreo. Las <strong>transcripciones y el audio no se guardan</strong>.</p>
-  <figure class="image-slot">
-    <img src="assets/img/diagrama-casos-uso.png" alt="Diagrama de casos de uso (imagen propia)" hidden>
-    <div class="slot-empty"><strong>Casos de Uso del Sistema</strong>Guarda la imagen exportada como <code>assets/img/diagrama-casos-uso.png</code>.</div>
-    <figcaption>Diagrama de casos de uso</figcaption>
-  </figure>
+
+  <h2 id="casos-uso">Casos de uso del sistema</h2>
+  <p>Elige un actor para iluminar lo que puede hacer dentro de GuardianMesh.</p>
+  <div class="scene3d" data-scene="casos"></div>
+  <details class="s3-table"><summary>Ver tabla de casos de uso</summary><div class="table-wrap"><table><thead><tr><th>Actor</th><th>Casos de uso</th></tr></thead><tbody><tr><td>Persona mayor</td><td>Iniciar sesión · Gestionar contactos · Crear desafío y huella de voz · Consultar historial · Contestar llamada · Ver semáforo de riesgo · Verificar con pregunta familiar · Avisar a la Red de Confianza · Llamar a un contacto</td></tr><tr><td>Llamante</td><td>Iniciar sesión · Llamar a un contacto</td></tr><tr><td>IA · Bedrock</td><td>Evaluar riesgo · Transcribir audio</td></tr><tr><td>Contacto de confianza</td><td>Iniciar sesión · Gestionar contactos · Consultar historial · Recibir avisos</td></tr></tbody></table></div></details>
   <figure class="image-slot">
     <img src="assets/img/mockup-app.png" alt="Mockup de la app (imagen propia)" hidden>
     <div class="slot-empty"><strong>Mockup / capturas de la app</strong>Guarda la imagen como <code>assets/img/mockup-app.png</code>.</div>
