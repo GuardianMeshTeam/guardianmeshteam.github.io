@@ -110,11 +110,6 @@ sequenceDiagram
   S-->>A: call:ended
   S-->>B: call:ended
   </pre></div>
-  <figure class="image-slot">
-    <img src="assets/img/diagrama-secuencia.png" alt="Diagrama de secuencia (imagen propia)" hidden>
-    <div class="slot-empty"><strong>Espacio para imagen: diagrama de secuencia</strong>Guarda tu exportación como <code>assets/img/diagrama-secuencia.png</code>.</div>
-    <figcaption>Diagrama de secuencia (versión exportada)</figcaption>
-  </figure>
 
   <h2 id="estados">Máquinas de estado</h2>
   <p>Las dos máquinas son interactivas: los botones muestran únicamente las transiciones válidas del estado actual.</p>
@@ -128,45 +123,11 @@ sequenceDiagram
   <p>Las transiciones de la llamada son condicionales en DynamoDB: gana el primer escritor. Las reglas duras (<code>desafio_fallido</code>, <code>dinero_mas_urgencia</code>, <code>clonacion_vocal</code>, <code>suplantacion_biometrica</code>) fuerzan RED con score 100.</p>
 
   <h2 id="datos">Modelo de datos DynamoDB</h2>
-  <div class="diagram"><pre class="mermaid">
-erDiagram
-  CALLS {
-    string call_id PK
-    string caller_id
-    string receiver_id
-    string status
-    number expires_at
-  }
-  CONNECTIONS {
-    string user_id PK
-    string connection_id
-    number expires_at
-  }
-  CONTACTS {
-    string user_id PK
-    string contact_id "SK"
-    string status
-  }
-  CALL_RISK {
-    string particion PK "pk"
-    number expires_at
-  }
-  CALL_HISTORY {
-    string user_id PK
-    string orden "sk (SK)"
-    string call_id
-    number expires_at
-  }
-  NOTIFICATIONS {
-    string particion PK "pk"
-    string orden "sk (SK)"
-    number expires_at
-  }
-  CONTACTS ||--o{ CALLS : "participan"
-  CALLS ||--o{ CALL_HISTORY : "una fila por participante"
-  CALLS ||--o{ CALL_RISK : "estado y contadores"
-  CONTACTS ||--o{ NOTIFICATIONS : "destinatarios"
-  </pre></div>
+  <figure class="image-slot">
+    <img src="assets/img/modelo-datos.png" alt="Modelo de datos en DynamoDB" hidden>
+    <div class="slot-empty"><strong>Modelo de Datos en DynamoDB</strong>Guarda la imagen exportada como <code>assets/img/modelo-datos.png</code></div>
+    <figcaption>Modelo de datos en DynamoDB</figcaption>
+  </figure>
   <div class="table-wrap"><table>
     <thead><tr><th>Tabla</th><th>Clave</th><th>Índices</th><th>Contenido</th></tr></thead>
     <tbody>
@@ -181,12 +142,12 @@ erDiagram
   <p>Además existen <code>profiles</code> y <code>challenges</code> (módulo <code>data</code>) y las tablas de conexiones de avisos y de monitoreo. Las <strong>transcripciones y el audio no se guardan</strong>.</p>
   <figure class="image-slot">
     <img src="assets/img/diagrama-casos-uso.png" alt="Diagrama de casos de uso (imagen propia)" hidden>
-    <div class="slot-empty"><strong>Espacio para imagen: casos de uso</strong>Guarda tu exportación como <code>assets/img/diagrama-casos-uso.png</code>.</div>
+    <div class="slot-empty"><strong>Casos de Uso del Sistema</strong>Guarda la imagen exportada como <code>assets/img/diagrama-casos-uso.png</code>.</div>
     <figcaption>Diagrama de casos de uso</figcaption>
   </figure>
   <figure class="image-slot">
     <img src="assets/img/mockup-app.png" alt="Mockup de la app (imagen propia)" hidden>
-    <div class="slot-empty"><strong>Espacio para imagen: mockup / capturas de la app</strong>Guarda tu imagen como <code>assets/img/mockup-app.png</code>.</div>
+    <div class="slot-empty"><strong>Mockup / capturas de la app</strong>Guarda la imagen como <code>assets/img/mockup-app.png</code>.</div>
     <figcaption>Pantallas de la app Android</figcaption>
   </figure>
 

@@ -74,6 +74,16 @@
     if (img.complete) { if (img.naturalWidth) ok(); else miss(); }
   });
 
+  // Fotos del equipo: si el archivo no existe se quedan las iniciales
+  document.querySelectorAll('.avatar img').forEach(function (img) {
+    var initials = img.parentNode.querySelector('.initials');
+    function ok() { img.hidden = false; if (initials) initials.hidden = true; }
+    function miss() { img.hidden = true; if (initials) initials.hidden = false; }
+    img.addEventListener('load', ok);
+    img.addEventListener('error', miss);
+    if (img.complete && img.naturalWidth) ok();
+  });
+
   // Mermaid v11 (si no hay red, se queda el código fuente del diagrama)
   var diagrams = document.querySelectorAll('pre.mermaid');
   if (diagrams.length) {

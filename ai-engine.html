@@ -44,20 +44,11 @@
   <p>Ambos se configuran en Terraform (<code>BEDROCK_MODEL_ID</code>, <code>BEDROCK_AUDIO_MODEL_ID</code>). IAM concede <code>bedrock:InvokeModel</code> solo a esos ARN. Sin id de modelo, el servicio funciona con regex y sin audio.</p>
 
   <h2 id="pipeline">Pipeline de una evaluación</h2>
-  <div class="diagram"><pre class="mermaid">
-flowchart LR
-  A["Audio PCM 16 kHz 8 s"] --> T["Voxtral: transcribe"]
-  T --> N["Texto"]
-  F["Frases del laboratorio"] --> N
-  N --> I["Nova Lite: intención JSON"]
-  I -- "falla o 3 s" --> R["Fallback regex"]
-  I --> S["Suelo de reglas OR y max"]
-  R --> S
-  A --> H["RMS y ZCR: huella y planitud"]
-  S --> O["Orquestador"]
-  H --> O
-  O --> L["Semáforo GREEN AMBER RED"]
-  </pre></div>
+  <figure class="image-slot">
+    <img src="assets/img/pipeline-ia.png" alt="Pipeline de evaluación IA y fallback" hidden>
+    <div class="slot-empty"><strong>Pipeline de Evaluación IA y Fallback</strong>Guarda la imagen exportada como <code>assets/img/pipeline-ia.png</code></div>
+    <figcaption>Pipeline de evaluación con IA y fallback regex</figcaption>
+  </figure>
 
   <h2 id="prompts">Prompts</h2>
   <h3>Transcripción</h3>
