@@ -58,50 +58,10 @@
   <p>Entornos: <code>dev</code> (rama <code>development</code>) con todos los módulos; <code>prod</code> (rama <code>main</code>, con aprobación) hoy solo declara Cognito, gateway, KMS, datos y secretos.</p>
 
   <h2 id="componentes">Diagrama de componentes</h2>
-  <div class="diagram"><pre class="mermaid">
-flowchart LR
-  subgraph Cliente["GuardianMesh-front: PWA y Android"]
-    UI["React 19 + TypeScript"]
-    RTC["WebRTC + captura PCM 16 kHz"]
-  end
-  subgraph AWS["AWS us-east-1 - Terraform"]
-    COG["Cognito + Google IdP"]
-    GW["API Gateway HTTP + Lambda gateway"]
-    WSC["API Gateway WebSocket + Lambdas señalización"]
-    WSN["API Gateway WebSocket + Lambda avisos"]
-    SCH["EventBridge Scheduler"]
-    BR["Bedrock: Nova Lite y Voxtral"]
-    SM["Secrets Manager"]
-    DDB[("DynamoDB")]
-    K1["KMS pii"]
-    K2["KMS secrets"]
-    K3["KMS logs"]
-  end
-  UI -- "HTTPS + access token" --> GW
-  UI -- "WSS" --> WSC
-  UI -- "WSS" --> WSN
-  UI -. "OAuth + PKCE" .-> COG
-  GW --> DDB
-  GW --> BR
-  GW --> SM
-  GW -- "risk:update" --> WSC
-  GW -- "notification" --> WSN
-  WSC --> DDB
-  WSC --> SCH
-  WSN --> DDB
-  DDB --- K1
-  SM --- K2
-  GW --- K3
-  WSC --- K3
-  WSN --- K3
-  GW -. "JWKS" .-> COG
-  WSC -. "JWKS" .-> COG
-  WSN -. "JWKS" .-> COG
-  </pre></div>
   <figure class="image-slot">
-    <img src="assets/img/diagrama-componentes.png" alt="Diagrama de componentes (imagen propia)" hidden>
-    <div class="slot-empty"><strong>Espacio para imagen: diagrama de componentes</strong>Exporta tu diagrama en alta resolución y guárdalo como <code>assets/img/diagrama-componentes.png</code>. Aparecerá aquí automáticamente.</div>
-    <figcaption>Diagrama de componentes (versión exportada)</figcaption>
+    <img src="assets/img/diagrama-componentes.png" alt="Arquitectura de componentes AWS" hidden>
+    <div class="slot-empty"><strong>Arquitectura de Componentes AWS</strong>Guarda la imagen exportada como <code>assets/img/diagrama-componentes.png</code></div>
+    <figcaption>Arquitectura de componentes en AWS (us-east-1)</figcaption>
   </figure>
 
   <h2 id="secuencia">Secuencia extremo a extremo</h2>
@@ -143,82 +103,21 @@ sequenceDiagram
   S-->>A: call:ended
   S-->>B: call:ended
   </pre></div>
-  <figure class="image-slot">
-    <img src="assets/img/diagrama-secuencia.png" alt="Diagrama de secuencia (imagen propia)" hidden>
-    <div class="slot-empty"><strong>Espacio para imagen: diagrama de secuencia</strong>Guarda tu exportación como <code>assets/img/diagrama-secuencia.png</code>.</div>
-    <figcaption>Diagrama de secuencia (versión exportada)</figcaption>
-  </figure>
 
   <h2 id="estados">Máquinas de estado</h2>
-  <h3>Ciclo de vida de la llamada</h3>
-  <div class="diagram"><pre class="mermaid">
-stateDiagram-v2
-  [*] --> ringing
-  ringing --> accepted: call:accept
-  ringing --> rejected: call:reject
-  ringing --> timeout: 30 s sin respuesta
-  ringing --> ended: cuelga el llamante
-  accepted --> ended: hangup
-  accepted --> failed: falla WebRTC
-  rejected --> [*]
-  timeout --> [*]
-  ended --> [*]
-  failed --> [*]
-  </pre></div>
-  <h3>Nivel de riesgo</h3>
-  <div class="diagram"><pre class="mermaid">
-stateDiagram-v2
-  [*] --> GREEN
-  GREEN --> AMBER: score 40 a 69
-  GREEN --> RED: regla dura o score 70+
-  AMBER --> RED: regla dura o score 70+
-  AMBER --> GREEN: score bajo
-  RED --> AMBER: histéresis 15 s
-  RED --> GREEN: desafío familiar acertado
-  AMBER --> GREEN: desafío familiar acertado
-  </pre></div>
-  <p>Las transiciones de la llamada son condicionales en DynamoDB: gana el primer escritor. Las reglas duras (<code>desafio_fallido</code>, <code>dinero_mas_urgencia</code>, <code>clonacion_vocal</code>, <code>suplantacion_biometrica</code>) fuerzan RED con score 100.</p>
+  <figure class="image-slot">
+    <img src="assets/img/diagrama-estados.png" alt="Máquinas de estado de la llamada y del semáforo" hidden>
+    <div class="slot-empty"><strong>Máquinas de Estado: Llamada y Semáforo</strong>Guarda la imagen exportada como <code>assets/img/diagrama-estados.png</code></div>
+    <figcaption>Máquinas de estado: ciclo de vida de la llamada y nivel de riesgo</figcaption>
+  </figure>
+    <p>Las transiciones de la llamada son condicionales en DynamoDB: gana el primer escritor. Las reglas duras (<code>desafio_fallido</code>, <code>dinero_mas_urgencia</code>, <code>clonacion_vocal</code>, <code>suplantacion_biometrica</code>) fuerzan RED con score 100.</p>
 
   <h2 id="datos">Modelo de datos DynamoDB</h2>
-  <div class="diagram"><pre class="mermaid">
-erDiagram
-  CALLS {
-    string call_id PK
-    string caller_id
-    string receiver_id
-    string status
-    number expires_at
-  }
-  CONNECTIONS {
-    string user_id PK
-    string connection_id
-    number expires_at
-  }
-  CONTACTS {
-    string user_id PK
-    string contact_id SK
-    string status
-  }
-  CALL_RISK {
-    string pk PK
-    number expires_at
-  }
-  CALL_HISTORY {
-    string user_id PK
-    string sk SK
-    string call_id
-    number expires_at
-  }
-  NOTIFICATIONS {
-    string pk PK
-    string sk SK
-    number expires_at
-  }
-  CONTACTS ||--o{ CALLS : "participan"
-  CALLS ||--o{ CALL_HISTORY : "una fila por participante"
-  CALLS ||--o{ CALL_RISK : "estado y contadores"
-  CONTACTS ||--o{ NOTIFICATIONS : "destinatarios"
-  </pre></div>
+  <figure class="image-slot">
+    <img src="assets/img/modelo-datos.png" alt="Modelo de datos en DynamoDB" hidden>
+    <div class="slot-empty"><strong>Modelo de Datos en DynamoDB</strong>Guarda la imagen exportada como <code>assets/img/modelo-datos.png</code></div>
+    <figcaption>Modelo de datos en DynamoDB</figcaption>
+  </figure>
   <div class="table-wrap"><table>
     <thead><tr><th>Tabla</th><th>Clave</th><th>Índices</th><th>Contenido</th></tr></thead>
     <tbody>
@@ -233,12 +132,12 @@ erDiagram
   <p>Además existen <code>profiles</code> y <code>challenges</code> (módulo <code>data</code>) y las tablas de conexiones de avisos y de monitoreo. Las <strong>transcripciones y el audio no se guardan</strong>.</p>
   <figure class="image-slot">
     <img src="assets/img/diagrama-casos-uso.png" alt="Diagrama de casos de uso (imagen propia)" hidden>
-    <div class="slot-empty"><strong>Espacio para imagen: casos de uso</strong>Guarda tu exportación como <code>assets/img/diagrama-casos-uso.png</code>.</div>
+    <div class="slot-empty"><strong>Casos de Uso del Sistema</strong>Guarda la imagen exportada como <code>assets/img/diagrama-casos-uso.png</code>.</div>
     <figcaption>Diagrama de casos de uso</figcaption>
   </figure>
   <figure class="image-slot">
     <img src="assets/img/mockup-app.png" alt="Mockup de la app (imagen propia)" hidden>
-    <div class="slot-empty"><strong>Espacio para imagen: mockup / capturas de la app</strong>Guarda tu imagen como <code>assets/img/mockup-app.png</code>.</div>
+    <div class="slot-empty"><strong>Mockup / capturas de la app</strong>Guarda la imagen como <code>assets/img/mockup-app.png</code>.</div>
     <figcaption>Pantallas de la app Android</figcaption>
   </figure>
 

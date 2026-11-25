@@ -33,6 +33,24 @@
   <h1>Casos de uso, requisitos y hoja de ruta</h1>
   <p class="lead">Qué hace hoy GuardianMesh en la rama <code>development</code> y qué queda para la Fase 2, sin sobredimensionar.</p>
 
+  <h2 id="ux">Diseño UX/UI y Flujo de Pantallas (Accesibilidad)</h2>
+  <p>GuardianMesh se diseñó pensando en la persona adulta mayor: debe poder entender qué pasa en una llamada sin leer texto pequeño ni tener que adivinar qué tocar.</p>
+  <div class="grid">
+    <div class="card"><h3>Alto contraste</h3><p>Texto oscuro sobre fondos claros con contraste AA, y tamaño de letra base grande.</p></div>
+    <div class="card"><h3>Botones táctiles claros</h3><p>Áreas de toque de 56 px, una acción principal por pantalla y etiquetas en español sencillo.</p></div>
+    <div class="card"><h3>Semáforo que no depende del color</h3><p>Verde, ámbar y rojo siempre llevan texto, ícono, voz y vibración configurables.</p></div>
+  </div>
+  <div class="card ux-card" style="margin-top:16px">
+    <p><strong>Prototipo visual completo.</strong> Abre el flujo de pantallas diseñado para el proyecto (editable: cambia el <code>href</code> si el enlace cambia).</p>
+    <a class="btn btn-primary" href="https://claude.ai/artifact/NbCCoDzDb7epjdtKpbuLse#page-da5bc254d2bf" target="_blank" rel="noopener">Abrir prototipo UX/UI ↗</a>
+  </div>
+  <figure class="image-slot">
+    <img src="assets/img/flujo-ux-figma.png" alt="Flujo de pantallas UX/UI (Figma)" hidden>
+    <div class="slot-empty"><strong>Flujo de pantallas UX/UI (Figma)</strong>Guarda la imagen exportada como <code>assets/img/flujo-ux-figma.png</code></div>
+    <figcaption>Flujo de diseño UX/UI</figcaption>
+  </figure>
+  <p class="callout"><strong>Nota:</strong> esta imagen y el prototipo corresponden al <em>flujo de diseño UX/UI</em>, distinto de las capturas de la build compilada de Android.</p>
+
   <h2 id="casos">Casos de uso principales</h2>
   <div class="grid">
     <div class="card"><h3>Recibir una llamada protegida</h3><p>El usuario protegido acepta una llamada de un contacto y ve el semáforo en tiempo casi real.</p></div>
