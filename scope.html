@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GuardianMesh · Alcance y hoja de ruta</title>
-<meta name="description" content="Casos de uso, historias de usuario implementadas, alcance del MVP y hoja de ruta de la Fase 2 de GuardianMesh.">
+<title>GuardianMesh · Alcance y evolución</title>
+<meta name="description" content="Diseño UX/UI, historias de usuario implementadas y evolución del producto GuardianMesh.">
 <meta name="theme-color" content="#071D49">
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css?v=4">
+<link rel="stylesheet" href="assets/styles.css?v=5">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -18,20 +18,20 @@
 <div class="scrim" id="scrim"></div>
 <aside class="sidebar" id="sidebar" aria-label="Navegación">
   <a class="brand" href="index.html"><span class="logo-wrap"><img src="assets/logo-guardianmesh.png" alt="" width="36" height="36"></span><span>GuardianMesh<small>Documentación técnica</small></span></a>
-  <nav class="nav">
+  <nav class="nav" aria-label="Secciones del portal">
     <a href="index.html">Visión general</a>
     <a href="architecture.html">Arquitectura</a>
     <a href="ai-engine.html">Motor de IA</a>
     <a href="security.html">Seguridad y calidad</a>
-    <a href="scope.html" aria-current="page">Alcance y hoja de ruta</a>
+    <a href="scope.html" aria-current="page">Alcance y evolución</a>
   </nav>
-  <div class="toc"><p>En esta página</p><div id="toc-list"></div></div>
+  <nav class="toc" aria-label="En esta página"><p>En esta página</p><div id="toc-list"></div></nav>
 </aside>
 
 <main id="contenido"><div class="content">
   <p class="eyebrow">Alcance</p>
-  <h1>Casos de uso, requisitos y hoja de ruta</h1>
-  <p class="lead">Qué hace hoy GuardianMesh en la rama <code>development</code> y qué queda para la Fase 2, sin sobredimensionar.</p>
+  <h1>Alcance construido y evolución</h1>
+  <p class="lead">La experiencia diseñada para la persona mayor, las historias de usuario construidas y hacia dónde crece el producto.</p>
 
   <h2 id="ux">Diseño UX/UI y Flujo de Pantallas (Accesibilidad)</h2>
   <p>GuardianMesh se diseñó pensando en la persona adulta mayor: debe poder entender qué pasa en una llamada sin leer texto pequeño ni tener que adivinar qué tocar.</p>
@@ -41,7 +41,7 @@
     <div class="card"><h3>Semáforo que no depende del color</h3><p>Verde, ámbar y rojo siempre llevan texto, ícono, voz y vibración configurables.</p></div>
   </div>
   <div class="card ux-card" style="margin-top:16px">
-    <p><strong>Prototipo visual completo.</strong> Abre el flujo de pantallas diseñado para el proyecto (editable: cambia el <code>href</code> si el enlace cambia).</p>
+    <p><strong>Prototipo visual completo.</strong> Abre el flujo de pantallas diseñado para el proyecto.</p>
     <a class="btn btn-primary" href="https://claude.ai/artifact/NbCCoDzDb7epjdtKpbuLse#page-da5bc254d2bf" target="_blank" rel="noopener">Abrir prototipo UX/UI ↗</a>
   </div>
   <div class="ux-gallery">
@@ -64,46 +64,61 @@
   </div>
 
   <h2 id="hu">Historias de usuario implementadas</h2>
-  <p>Identificadores citados en el código y en las pruebas de la rama <code>development</code>.</p>
-  <div class="table-wrap"><table>
-    <thead><tr><th>HU</th><th>Descripción</th><th>Evidencia</th><th>Estado</th></tr></thead>
-    <tbody>
-      <tr><td><strong>HU-04</strong></td><td>Desafío familiar con secreto compartido (HMAC-SHA256)</td><td><code>guardianmesh_challenge/desafio.py</code>; <code>/challenge</code></td><td><span class="badge ok">Implementada</span></td></tr>
-      <tr><td><strong>HU-16</strong></td><td>Orquestador de riesgo: reglas duras, fusión 60/40, histéresis 15 s</td><td><code>guardianmesh_orchestrator/orquestador.py</code></td><td><span class="badge ok">Implementada</span></td></tr>
-      <tr><td><strong>HU-17</strong></td><td>Agente de intención y urgencia (Nova Lite + fallback regex)</td><td><code>guardianmesh_intent/</code></td><td><span class="badge ok">Implementada</span></td></tr>
-      <tr><td><strong>HU-19</strong></td><td>Pregunta de seguridad por contacto</td><td>Pantalla <code>SecurityQuestionScreen</code>; <code>/contacts/{id}/security</code></td><td><span class="badge ok">Implementada</span></td></tr>
-      <tr><td><strong>HU-21</strong></td><td>Biometría vocal por huella (RMS/ZCR)</td><td><code>guardianmesh_voice/analizador.py</code></td><td><span class="badge warn">Heurística</span></td></tr>
-      <tr><td><strong>HU-22</strong></td><td>Detección de voz sintética por planitud</td><td><code>guardianmesh_voice/analizador.py</code></td><td><span class="badge warn">Heurística</span></td></tr>
-      <tr><td><strong>HU-23</strong></td><td>Cascarón accesible de la persona adulta mayor</td><td><code>AppShell</code>, <code>CarmenHomeScreen</code></td><td><span class="badge ok">Implementada</span></td></tr>
-      <tr><td><strong>HU-26</strong></td><td>En ámbar o rojo, colgar y llamar al contacto de confianza</td><td><code>CallProvider.tsx</code></td><td><span class="badge ok">Implementada</span></td></tr>
-    </tbody>
-  </table></div>
-  <p>También implementados: login con Google, registro con código por correo, directorio de contactos, historial de llamadas, avisos a la Red de Confianza por WebSocket y app Android con Capacitor.</p>
-
-  <h2 id="mvp-vs-f2">Alcance MVP actual vs. Roadmap Fase 2</h2>
-  <div class="table-wrap"><table>
-    <thead><tr><th>Tema</th><th>MVP actual</th><th>Roadmap Fase 2</th></tr></thead>
-    <tbody>
-      <tr><td>Llamadas</td><td>Audio 1:1 por WebRTC <strong>dentro de la app</strong></td><td>Llamadas por red telefónica (PSTN)</td></tr>
-      <tr><td>Avisos</td><td>WebSocket + DynamoDB (pendientes al reconectar)</td><td>Notificaciones push (FCM/APNs) y SMS</td></tr>
-      <tr><td>Biometría y anti-spoofing</td><td>Heurísticas estadísticas RMS/ZCR</td><td>Embeddings de locutor y modelo entrenado</td></tr>
-      <tr><td>Transcripción</td><td>Fragmentos de ~8 s cada ~6 s (casi tiempo real)</td><td>Streaming continuo</td></tr>
-      <tr><td>NAT / conectividad</td><td>STUN público (<code>VITE_ICE_SERVERS</code>)</td><td>Servidor TURN propio</td></tr>
-      <tr><td>Despliegue</td><td><code>dev</code> completo; <code>prod</code> con Cognito, gateway, KMS, datos y secretos</td><td>Señalización, riesgo y avisos en <code>prod</code></td></tr>
-      <tr><td>Perímetro</td><td>Throttling + validación JWT; <code>waf_enabled = false</code></td><td>WAF activo (requiere migrar a REST API)</td></tr>
-      <tr><td>Plataformas</td><td>PWA y Android (APK debug y release firmado)</td><td>Publicación en tienda e iOS</td></tr>
-    </tbody>
-  </table></div>
-  <div class="callout"><p><strong>Límites conocidos del MVP:</strong> el análisis lo ve solo quien recibe la llamada; las frases escritas del laboratorio (<code>VITE_RISK_LAB</code>) son una entrada de pruebas y no cambian el semáforo real; una sola región (<code>us-east-1</code>).</p></div>
-
-  <h2 id="roadmap">Hoja de ruta</h2>
-  <div class="grid">
-    <div class="card"><h3>Ahora</h3><p><span class="badge ok">Hecho</span> Riesgo en llamada, desafío familiar, historial, avisos y APK.</p></div>
-    <div class="card"><h3>Siguiente</h3><p><span class="badge warn">Pendiente</span> Reejecutar pruebas en Python 3.12, CI de tests en api y communications, limpiar rutas sin uso del front.</p></div>
-    <div class="card"><h3>Fase 2</h3><p><span class="badge">Planeado</span> PSTN, push/SMS, embeddings de voz, TURN, WAF y <code>prod</code> completo.</p></div>
+  <p>El alcance construido se agrupa en tres módulos funcionales. <strong>HU</strong> es la historia de usuario citada en el código y <strong>RF</strong>, un requisito funcional complementario.</p>
+  <div class="modules">
+    <section class="card module" aria-labelledby="mod-1">
+      <header><span class="module-n" aria-hidden="true">1</span><div><h3 id="mod-1">Red Familiar Verificada y Consentimiento</h3><p>Quién puede llamar, con aceptación de ambas partes.</p></div></header>
+      <ul class="hu-list">
+      <li><span class="hu">HU-02</span><div><b>Acceso con Google o correo y contraseña</b><small>Cognito · OAuth 2.0 + PKCE · código de verificación por correo</small></div></li>
+      <li><span class="hu">RF</span><div><b>Invitar por correo y aceptar o rechazar: el vínculo es mutuo solo al aceptar</b><small><code>core/contacts.py</code> · <code>ContactsScreen</code></small></div></li>
+      <li><span class="hu">RF</span><div><b>Hasta 3 contactos de confianza</b><small><code>/contacts/trust</code></small></div></li>
+      <li><span class="hu">HU-19</span><div><b>Pregunta de seguridad por contacto</b><small><code>SecurityQuestionScreen</code> · <code>/contacts/{id}/security</code></small></div></li>
+      <li><span class="hu">RF</span><div><b>Avisos en vivo a la Red de Confianza</b><small><code>/notifications</code> · WebSocket de avisos</small></div></li>
+      </ul>
+    </section>
+    <section class="card module" aria-labelledby="mod-2">
+      <header><span class="module-n" aria-hidden="true">2</span><div><h3 id="mod-2">Llamadas WebRTC 1:1 y Semáforo Accesible</h3><p>La conversación y cómo se comunica el riesgo.</p></div></header>
+      <ul class="hu-list">
+      <li><span class="hu">HU-10</span><div><b>Señalización y ciclo de vida de la llamada</b><small><code>core/service.py</code> · <code>useCall.ts</code></small></div></li>
+      <li><span class="hu">HU-24</span><div><b>Pantallas de llamada entrante y en curso</b><small><code>CallScreen.tsx</code></small></div></li>
+      <li><span class="hu">HU-25</span><div><b>Indicador de riesgo con motivo en lenguaje simple, voz, vibración y sonido</b><small><code>RiskIndicator.tsx</code></small></div></li>
+      <li><span class="hu">HU-23</span><div><b>Navegación accesible para la persona adulta mayor</b><small><code>AppShell</code> · <code>CarmenHomeScreen</code></small></div></li>
+      <li><span class="hu">HU-26</span><div><b>En ámbar o rojo: colgar y llamar al contacto de confianza</b><small><code>CallProvider.tsx</code></small></div></li>
+      <li><span class="hu">RF</span><div><b>Historial con el nivel máximo de riesgo · App Android</b><small><code>/calls/history</code> · Capacitor 8</small></div></li>
+      </ul>
+    </section>
+    <section class="card module" aria-labelledby="mod-3">
+      <header><span class="module-n" aria-hidden="true">3</span><div><h3 id="mod-3">Evaluación de Riesgo IA y Desafío Secreto HMAC-SHA256</h3><p>Cómo se decide el nivel y cómo se verifica la identidad.</p></div></header>
+      <ul class="hu-list">
+      <li><span class="hu">HU-17</span><div><b>Agente de intención y urgencia con fallback por reglas</b><small><code>guardianmesh_intent/</code></small></div></li>
+      <li><span class="hu">HU-16</span><div><b>Orquestador: reglas duras, fusión 60/40 e histéresis de 15 s</b><small><code>orquestador.py</code></small></div></li>
+      <li><span class="hu">HU-21</span><div><b>Huella vocal por RMS/ZCR</b><small><code>guardianmesh_voice/analizador.py</code></small></div></li>
+      <li><span class="hu">HU-22</span><div><b>Detección de voz sintética por planitud acústica</b><small><code>guardianmesh_voice/analizador.py</code></small></div></li>
+      <li><span class="hu">HU-04</span><div><b>Desafío familiar con HMAC-SHA256 e intentos limitados</b><small><code>guardianmesh_challenge/desafio.py</code></small></div></li>
+      <li><span class="hu">HU-20</span><div><b>Pregunta de seguridad durante la llamada de riesgo</b><small><code>SecurityChallenge.tsx</code> · <code>/challenge</code></small></div></li>
+      </ul>
+    </section>
   </div>
+
+  <h2 id="evolucion">Evolución del Producto (MVP Actual y Proyección)</h2>
+  <p>Cada capacidad del MVP tiene un siguiente paso definido.</p>
+  <div class="table-wrap"><table class="evo">
+    <thead><tr><th>Capacidad</th><th>MVP actual</th><th>Proyección</th></tr></thead>
+    <tbody>
+      <tr><td>Llamadas</td><td>Audio 1:1 por WebRTC dentro de la app</td><td>Integración con la red telefónica (PSTN)</td></tr>
+      <tr><td>Avisos</td><td>Tiempo real por WebSocket, con entrega al reconectar desde DynamoDB</td><td>Notificaciones push (FCM/APNs) y SMS</td></tr>
+      <tr><td>Análisis de voz</td><td>Análisis acústico RMS/ZCR</td><td>Embeddings de locutor y anti-spoofing entrenado</td></tr>
+      <tr><td>Transcripción</td><td>Fragmentos de ~8 s cada ~6 s, casi en tiempo real</td><td>Streaming continuo</td></tr>
+      <tr><td>Conectividad</td><td>STUN público</td><td>Servidor TURN propio</td></tr>
+      <tr><td>Perímetro</td><td>Throttling, tokens JWT y 3 llaves CMK</td><td>Reglas administradas de AWS WAF</td></tr>
+      <tr><td>Despliegue</td><td>Entorno <code>dev</code> completo en <code>us-east-1</code>; identidad, gateway y datos declarados en <code>prod</code></td><td>Señalización, riesgo y avisos en <code>prod</code></td></tr>
+      <tr><td>Plataformas</td><td>PWA y Android (APK de prueba y release firmado)</td><td>Publicación en tiendas e iOS</td></tr>
+    </tbody>
+  </table></div>
+
+  <nav class="pager" aria-label="Páginas"><a class="pager-prev" href="security.html" rel="prev"><small>← Anterior</small>Seguridad y calidad</a></nav>
 </div></main>
-<footer class="foot">GuardianMesh · SWNT 2026-2 · Documentación generada desde la rama <code>development</code>.</footer>
-<script src="assets/app.js?v=4"></script>
+<footer class="foot">GuardianMesh · Proyecto SWNT 2026-2 · Escuela Colombiana de Ingeniería Julio Garavito</footer>
+<script src="assets/app.js?v=5"></script>
 </body>
 </html>

@@ -11,9 +11,9 @@
   if (btn) btn.addEventListener('click', function () { setNav(!body.classList.contains('nav-open')); });
   if (scrim) scrim.addEventListener('click', function () { setNav(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setNav(false); });
-  document.querySelectorAll('.sidebar a').forEach(function (a) {
-    a.addEventListener('click', function () { setNav(false); });
-  });
+  // delegado: los enlaces de "En esta página" se crean después
+  var menu = document.getElementById('sidebar');
+  if (menu) menu.addEventListener('click', function (e) { if (e.target.closest('a')) setNav(false); });
 
   // Tabla de contenido desde los h2 + resaltado de la sección activa
   var toc = document.getElementById('toc-list');
@@ -28,15 +28,56 @@
       links[h.id] = a;
     });
   }
-  if (heads.length && 'IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (!en.isIntersecting) return;
-        Object.keys(links).forEach(function (k) { links[k].classList.remove('active'); });
-        if (links[en.target.id]) links[en.target.id].classList.add('active');
+  if (heads.length && toc) {
+    var sidebar = document.getElementById('sidebar');
+    var current = null;
+    var locked = false; // tras un clic manda el enlace elegido hasta que la persona vuelva a desplazarse
+    var setActive = function (id) {
+      if (!links[id] || id === current) return;
+      current = id;
+      Object.keys(links).forEach(function (k) {
+        var on = k === id;
+        links[k].classList.toggle('active', on);
+        if (on) links[k].setAttribute('aria-current', 'location'); else links[k].removeAttribute('aria-current');
       });
-    }, { rootMargin: '-20% 0px -70% 0px' });
-    heads.forEach(function (h) { io.observe(h); });
+      // mantiene visible el subítem activo dentro de la barra, sin mover la página
+      var r = links[id].getBoundingClientRect(), s = sidebar.getBoundingClientRect();
+      if (r.bottom > s.bottom - 16) sidebar.scrollTop += r.bottom - s.bottom + 48;
+      else if (r.top < s.top + 16) sidebar.scrollTop -= s.top - r.top + 48;
+    };
+    var spy = function () {
+      if (locked) return;
+      var view = window.innerHeight, y = window.scrollY, total = document.body.offsetHeight;
+      if (y > 0 && view + y >= total - 40) { setActive(heads[heads.length - 1].id); return; }
+      // cerca del final la línea de lectura baja, para que las últimas secciones cortas también se activen
+      var left = total - (view + y), zone = view * 0.6, line = 150;
+      if (y > 0 && left < zone) line += (1 - left / zone) * (view - 150);
+      var id = heads[0].id;
+      heads.forEach(function (h) { if (h.getBoundingClientRect().top <= line) id = h.id; });
+      setActive(id);
+    };
+    var queued = false;
+    var queue = function () {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () { queued = false; spy(); });
+    };
+    var unlock = function () { if (locked) { locked = false; queue(); } };
+    toc.addEventListener('click', function (e) {
+      var a = e.target.closest('a');
+      if (!a) return;
+      locked = true;
+      setActive(decodeURIComponent(a.hash.slice(1)));
+    });
+    ['wheel', 'touchmove'].forEach(function (ev) { addEventListener(ev, function (e) { if (!sidebar.contains(e.target)) unlock(); }, { passive: true }); });
+    addEventListener('pointerdown', function (e) { if (!sidebar.contains(e.target)) unlock(); });
+    addEventListener('keydown', function (e) { if (/^(Arrow|Page|Home|End| )/.test(e.key) && !sidebar.contains(e.target)) unlock(); });
+    addEventListener('scroll', queue, { passive: true });
+    addEventListener('resize', queue);
+    if ('ResizeObserver' in window) new ResizeObserver(queue).observe(body);
+    var start = location.hash && decodeURIComponent(location.hash.slice(1));
+    if (start && links[start]) { locked = true; setActive(start); }
+    spy();
   }
 
   // Botones "Copiar"
@@ -64,14 +105,9 @@
     });
   });
 
-  // Imágenes opcionales: si faltan, queda visible el espacio reservado
-  document.querySelectorAll('figure.image-slot img').forEach(function (img) {
-    var empty = img.parentNode.querySelector('.slot-empty');
-    function miss() { img.hidden = true; if (empty) empty.hidden = false; }
-    function ok() { img.hidden = false; if (empty) empty.hidden = true; }
-    img.addEventListener('error', miss);
-    img.addEventListener('load', ok);
-    if (img.complete) { if (img.naturalWidth) ok(); else miss(); }
+  // Tablas con scroll horizontal: accesibles con teclado
+  document.querySelectorAll('.table-wrap').forEach(function (t) {
+    if (t.scrollWidth > t.clientWidth + 1) { t.tabIndex = 0; t.setAttribute('role', 'region'); t.setAttribute('aria-label', 'Tabla desplazable'); }
   });
 
   // Fotos del equipo: si el archivo no existe se quedan las iniciales

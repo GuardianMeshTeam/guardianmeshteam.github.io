@@ -7,7 +7,7 @@
 <meta name="description" content="Controles de seguridad, privacidad zero-storage, cifrado, STRIDE, DevSecOps y atributos ISO/IEC 25010 de GuardianMesh.">
 <meta name="theme-color" content="#071D49">
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css?v=4">
+<link rel="stylesheet" href="assets/styles.css?v=5">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -18,14 +18,14 @@
 <div class="scrim" id="scrim"></div>
 <aside class="sidebar" id="sidebar" aria-label="Navegación">
   <a class="brand" href="index.html"><span class="logo-wrap"><img src="assets/logo-guardianmesh.png" alt="" width="36" height="36"></span><span>GuardianMesh<small>Documentación técnica</small></span></a>
-  <nav class="nav">
+  <nav class="nav" aria-label="Secciones del portal">
     <a href="index.html">Visión general</a>
     <a href="architecture.html">Arquitectura</a>
     <a href="ai-engine.html">Motor de IA</a>
     <a href="security.html" aria-current="page">Seguridad y calidad</a>
-    <a href="scope.html">Alcance y hoja de ruta</a>
+    <a href="scope.html">Alcance y evolución</a>
   </nav>
-  <div class="toc"><p>En esta página</p><div id="toc-list"></div></div>
+  <nav class="toc" aria-label="En esta página"><p>En esta página</p><div id="toc-list"></div></nav>
 </aside>
 
 <main id="contenido"><div class="content">
@@ -46,7 +46,7 @@
       <tr><td>Anti-enumeración</td><td>Invitar por correo responde siempre igual; <code>forbidden</code> es idéntico para "no participante" y "no existe".</td></tr>
     </tbody>
   </table></div>
-  <div class="callout"><p>El segundo factor TOTP ya <strong>no está activo</strong> (<code>mfa_configuration = OFF</code>). El nombre <code>aal2</code> se conserva por compatibilidad y significa "sesión con inicio de sesión completo".</p></div>
+  <div class="callout"><p>El claim <code>aal2</code> certifica que la sesión completó un inicio de sesión admitido (Google o correo y contraseña). El gateway, la señalización y los avisos lo exigen.</p></div>
 
   <h2 id="privacidad">Privacidad Zero-Storage</h2>
   <ul>
@@ -90,7 +90,7 @@
       <tr><td>Despliegue sin llaves</td><td>GitHub Actions con <strong>OIDC</strong> (sin access keys), rol de plan de solo lectura y rol de apply; <code>prod</code> con aprobación y solo desde <code>main</code>; acciones fijadas por SHA</td></tr>
     </tbody>
   </table></div>
-  <div class="callout warn"><p><strong>Nota honesta sobre WAF:</strong> el módulo del gateway define reglas de AWS WAFv2 (IP reputation, reglas comunes, entradas maliciosas y límite por IP), pero <code>waf_enabled = false</code> en <code>dev</code>: WAFv2 no se asocia a una HTTP API v2. Hoy la protección perimetral es el throttling del API Gateway y la validación del JWT; activar WAF requiere migrar a REST API (Fase 2).</p></div>
+  <div class="callout"><p>Protección perimetral mediante limitación de tasa (throttling) en AWS API Gateway HTTP v2, autenticación estricta con tokens JWT y cifrado en reposo con 3 llaves CMK en AWS KMS.</p></div>
 
   <h2 id="iso25010">Atributos de calidad ISO/IEC 25010</h2>
   <div class="table-wrap"><table>
@@ -104,9 +104,9 @@
       <tr><td>Usabilidad</td><td>Color siempre acompañado de texto, voz y vibración; áreas de toque de 56 px; contraste AA</td></tr>
     </tbody>
   </table></div>
-  <div class="callout"><p>Los resultados de ejecución de las pruebas no se citan aquí: deben reejecutarse en Python 3.12 antes de publicarse como evidencia.</p></div>
+  <nav class="pager" aria-label="Páginas"><a class="pager-prev" href="ai-engine.html" rel="prev"><small>← Anterior</small>Motor de IA</a><a class="pager-next" href="scope.html" rel="next"><small>Siguiente →</small>Alcance y evolución</a></nav>
 </div></main>
-<footer class="foot">GuardianMesh · SWNT 2026-2 · Documentación generada desde la rama <code>development</code>.</footer>
-<script src="assets/app.js?v=4"></script>
+<footer class="foot">GuardianMesh · Proyecto SWNT 2026-2 · Escuela Colombiana de Ingeniería Julio Garavito</footer>
+<script src="assets/app.js?v=5"></script>
 </body>
 </html>

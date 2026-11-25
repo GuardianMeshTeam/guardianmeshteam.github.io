@@ -7,7 +7,7 @@
 <meta name="description" content="GuardianMesh protege a adultos mayores en Colombia contra el vishing y la suplantación en llamadas.">
 <meta name="theme-color" content="#071D49">
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css?v=4">
+<link rel="stylesheet" href="assets/styles.css?v=5">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -18,14 +18,14 @@
 <div class="scrim" id="scrim"></div>
 <aside class="sidebar" id="sidebar" aria-label="Navegación">
   <a class="brand" href="index.html"><span class="logo-wrap"><img src="assets/logo-guardianmesh.png" alt="" width="36" height="36"></span><span>GuardianMesh<small>Documentación técnica</small></span></a>
-  <nav class="nav">
+  <nav class="nav" aria-label="Secciones del portal">
     <a href="index.html" aria-current="page">Visión general</a>
     <a href="architecture.html">Arquitectura</a>
     <a href="ai-engine.html">Motor de IA</a>
     <a href="security.html">Seguridad y calidad</a>
-    <a href="scope.html">Alcance y hoja de ruta</a>
+    <a href="scope.html">Alcance y evolución</a>
   </nav>
-  <div class="toc"><p>En esta página</p><div id="toc-list"></div></div>
+  <nav class="toc" aria-label="En esta página"><p>En esta página</p><div id="toc-list"></div></nav>
 </aside>
 
 <main id="contenido"><div class="content">
@@ -39,7 +39,6 @@
         <a class="btn btn-ghost" href="architecture.html#simulacion-3d">▶ Simulación 3D</a>
         <a class="btn btn-ghost" href="architecture.html">Ver la arquitectura</a>
       </p>
-      <p class="cta-note"><strong>Aviso editable:</strong> el enlace apunta a la última <em>release</em> de GitHub. Si aún no se ha publicado el <code>.apk</code>, la página mostrará "no releases". Ver <code>FALTANTES_Y_PENDIENTES.md</code>.</p>
     </div>
     <div class="logo-slot" aria-label="Logo de GuardianMesh"><span class="logo-wrap logo-wrap-lg"><img src="assets/logo-guardianmesh.png" alt="Logo de GuardianMesh" width="132" height="132"></span></div>
   </section>
@@ -50,7 +49,7 @@
 
   <h2 id="como-funciona">Cómo funciona</h2>
   <div class="grid">
-    <div class="card"><h3>1. Llamada dentro de la app</h3><p>Audio 1:1 por WebRTC entre dos usuarios GuardianMesh. No usa la red telefónica.</p></div>
+    <div class="card"><h3>1. Llamada dentro de la app</h3><p>Audio 1:1 por WebRTC, de dispositivo a dispositivo, entre dos usuarios GuardianMesh.</p></div>
     <div class="card"><h3>2. Análisis en casi tiempo real</h3><p>El teléfono de quien <em>recibe</em> envía fragmentos de ~8 s al backend. IA en Amazon Bedrock + reglas determinísticas.</p></div>
     <div class="card"><h3>3. Semáforo y respuesta</h3><p>En ámbar o rojo puede responder una pregunta secreta familiar o colgar y avisar a su contacto de confianza.</p></div>
   </div>
@@ -69,7 +68,7 @@
   <p>El color nunca va solo: siempre se acompaña de texto, ícono, voz y vibración configurables. Tras un rojo, la llamada no vuelve a verde antes de 15 s (histéresis).</p>
 
   <h2 id="repos">Los 4 repositorios</h2>
-  <p>Datos verificados en la rama <code>development</code> de cada repositorio.</p>
+  <p>Cada tarjeta enlaza a la rama <code>development</code>.</p>
   <div class="grid">
     <div class="card"><h3>GuardianMesh-api</h3><span class="hash">94ae66f</span>
       <p>API &amp; Auth Gateway y motor de riesgo.</p>
@@ -89,12 +88,12 @@
       <p><a href="https://github.com/GuardianMeshTeam/GuardianMesh-infra/tree/development" rel="noopener">Rama development ↗</a></p></div>
   </div>
 
-  <h2 id="mvp">Alcance del MVP en una frase</h2>
-  <div class="callout"><p>Llamadas de audio <strong>1:1 por WebRTC dentro de la app</strong> (no PSTN). Avisos en tiempo real por <strong>WebSocket + DynamoDB</strong> (sin push FCM ni SMS en esta fase). Biometría y anti-spoofing por <strong>heurísticas estadísticas RMS/ZCR</strong>. Desafío familiar protegido con <strong>HMAC-SHA256</strong>.</p></div>
-  <p>Detalle completo en <a href="scope.html">Alcance y hoja de ruta</a>. Mira también el <a href="scope.html#ux">diseño UX/UI y flujo de pantallas</a>.</p>
+  <h2 id="mvp">El MVP en una frase</h2>
+  <div class="callout"><p>Llamadas de audio <strong>1:1 por WebRTC dentro de la app</strong>, avisos en tiempo real por <strong>WebSocket + DynamoDB</strong> y desafío familiar protegido con <strong>HMAC-SHA256</strong>. Análisis acústico ligero en tiempo real mediante extracción estadística de energía (RMS) y cruces por cero (ZCR), optimizado para baja latencia en móvil.</p></div>
+  <p>Detalle completo en <a href="scope.html">Alcance y evolución</a>. Mira también el <a href="scope.html#ux">diseño UX/UI y flujo de pantallas</a>.</p>
 
   <h2 id="equipo">Equipo</h2>
-  <p>Proyecto del curso SWNT 2026-2.</p>
+  <p>Proyecto SWNT 2026-2 · Escuela Colombiana de Ingeniería Julio Garavito.</p>
   <div class="grid team-grid">
     <div class="card member"><span class="avatar avatar-navy" role="img" aria-label="Foto o iniciales"><span class="initials">MP</span><img src="assets/img/team/maria-paula.jpg" alt="" loading="lazy" width="84" height="84" onerror="this.hidden=true;this.removeAttribute('src')"></span><h3>María Paula Rodríguez</h3></div>
     <div class="card member"><span class="avatar avatar-blue" role="img" aria-label="Foto o iniciales"><span class="initials">JM</span><img src="assets/img/team/juan-miguel.jpeg" alt="" loading="lazy" width="84" height="84" onerror="this.hidden=true;this.removeAttribute('src')"></span><h3>Juan Miguel Rojas</h3></div>
@@ -103,9 +102,10 @@
     <div class="card member"><span class="avatar avatar-blue" role="img" aria-label="Foto o iniciales"><span class="initials">FC</span><img src="assets/img/team/felipe.jpeg" alt="" loading="lazy" width="84" height="84" onerror="this.hidden=true;this.removeAttribute('src')"></span><h3>Felipe Calvache</h3></div>
     <div class="card member"><span class="avatar avatar-emerald" role="img" aria-label="Foto o iniciales"><span class="initials">DS</span><img src="assets/img/team/david.jpeg" alt="" loading="lazy" width="84" height="84" onerror="this.hidden=true;this.removeAttribute('src')"></span><h3>David Salamanca</h3></div>
   </div>
+  <nav class="pager" aria-label="Páginas"><a class="pager-next" href="architecture.html" rel="next"><small>Siguiente →</small>Arquitectura</a></nav>
 </div></main>
-<footer class="foot">GuardianMesh · SWNT 2026-2 · Documentación generada desde la rama <code>development</code>.</footer>
-<script src="assets/app.js?v=4"></script>
-<script src="assets/scene3d.js?v=4"></script>
+<footer class="foot">GuardianMesh · Proyecto SWNT 2026-2 · Escuela Colombiana de Ingeniería Julio Garavito</footer>
+<script src="assets/app.js?v=5"></script>
+<script src="assets/scene3d.js?v=5"></script>
 </body>
 </html>
