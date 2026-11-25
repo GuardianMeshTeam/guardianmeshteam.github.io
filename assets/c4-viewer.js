@@ -2,7 +2,8 @@
 (function () {
   document.querySelectorAll('figure.c4').forEach(function (fig) {
     var view = fig.querySelector('.c4-view');
-    fetch(fig.dataset.src).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (txt) {
+    var inline = window.GM_C4 && window.GM_C4[fig.id.replace('c4-', '')];
+    Promise.resolve(inline || fetch(fig.dataset.src).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })).then(function (txt) {
       var svg = new DOMParser().parseFromString(txt, 'image/svg+xml').documentElement;
       if (svg.nodeName !== 'svg') return;
       var alt = view.querySelector('img').alt, b = svg.getAttribute('viewBox').split(/\s+/).map(Number), v = b.slice();
