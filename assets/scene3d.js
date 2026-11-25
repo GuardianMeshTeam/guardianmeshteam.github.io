@@ -1,7 +1,17 @@
 /* Escenas 3D interactivas de GuardianMesh (Three.js).
    <div class="scene3d" data-scene="riesgo|llamada" [data-autoplay]></div>
    Las transiciones replican guardianmesh_orchestrator y guardianmesh_communications/core/call.py. */
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.min.js';
+/* Script clásico con import() dinámico: así también funciona al abrir el HTML con file:// */
+(async function () {
+  'use strict';
+  const roots = [...document.querySelectorAll('.scene3d[data-scene]')];
+  if (!roots.length) return;
+  const fail = (root, msg) => { root.classList.add('failed'); root.innerHTML = '<p class="callout warn">' + msg + ' Debajo de la escena está la tabla de transiciones en la página de Arquitectura.</p>'; };
+  let THREE = null;
+  for (const url of ['https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.min.js', 'https://unpkg.com/three@0.180.0/build/three.module.min.js']) {
+    try { THREE = await import(url); break; } catch (err) { console.warn('Three.js no cargó desde', url, err); }
+  }
+  if (!THREE) { roots.forEach(r => fail(r, 'No se pudo descargar Three.js (revisa la conexión o un bloqueador).')); return; }
 
 const C = { navy: 0x071D49, blue: 0x0A4DA2, mid: 0x2F72C0, sky: 0x8FB8EA, emerald: 0x00B87C, emeraldD: 0x008256,
   amber: 0xF59E0B, red: 0xDC2626, slab: 0xEDF1F7, slab2: 0xDCE4EF, wall: 0xC3CEDF, black: 0x15171C, gold: 0xF2B632,
@@ -452,11 +462,12 @@ function llamada(root) {
   return new Machine(st, { initial: 'inicio', colors: { inicio: '#071D49', ringing: '#0A4DA2', accepted: '#00875A', rejected: '#DC2626', timeout: '#B45309', ended: '#475569', failed: '#DC2626' }, transitions: T, enter, story: ['init', 'accept', 'hangup', 'reset', 'init', 'timeout', 'reset', 'init', 'reject', 'reset', 'init', 'accept', 'fail', 'reset'] });
 }
 
-document.querySelectorAll('.scene3d[data-scene]').forEach(root => {
+roots.forEach(root => {
   try {
     const m = ({ riesgo, llamada })[root.dataset.scene](root); root.machine = m;
     if (root.dataset.autoplay !== undefined && !reduced) {
       const io = new IntersectionObserver(e => { if (e[0].isIntersecting) { io.disconnect(); m.play(); } }, { threshold: .35 }); io.observe(root);
     }
-  } catch (err) { console.error(err); root.classList.add('failed'); root.innerHTML = '<p class="callout warn">Este navegador no pudo iniciar WebGL. Abajo está la tabla de transiciones.</p>'; }
+  } catch (err) { console.error(err); fail(root, 'Este navegador no pudo iniciar WebGL (activa la aceleración por hardware).'); }
 });
+})();

@@ -7,7 +7,7 @@
 <meta name="description" content="Arquitectura hexagonal, despliegue serverless en AWS, diagramas, endpoints y eventos de GuardianMesh.">
 <meta name="theme-color" content="#071D49">
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/styles.css?v=2">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -144,22 +144,22 @@ erDiagram
   }
   CONTACTS {
     string user_id PK
-    string contact_id SK
+    string contact_id "SK"
     string status
   }
   CALL_RISK {
-    string pk PK
+    string particion PK "pk"
     number expires_at
   }
   CALL_HISTORY {
     string user_id PK
-    string sk SK
+    string orden "sk (SK)"
     string call_id
     number expires_at
   }
   NOTIFICATIONS {
-    string pk PK
-    string sk SK
+    string particion PK "pk"
+    string orden "sk (SK)"
     number expires_at
   }
   CONTACTS ||--o{ CALLS : "participan"
@@ -225,8 +225,9 @@ erDiagram
   </table></div>
 </div></main>
 <footer class="foot">GuardianMesh · IETI / SWNT 2026-2 · Documentación generada desde la rama <code>development</code>.</footer>
-<script src="assets/app.js"></script>
-<script src="assets/c4-viewer.js"></script>
-<script type="module" src="assets/scene3d.js"></script>
+<script src="assets/app.js?v=2"></script>
+<script src="assets/diagrams/c4-svg.js?v=2"></script>
+<script src="assets/c4-viewer.js?v=2"></script>
+<script src="assets/scene3d.js?v=2"></script>
 </body>
 </html>

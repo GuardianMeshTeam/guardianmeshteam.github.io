@@ -88,7 +88,12 @@
           lineColor: '#475569', fontFamily: 'Inter, system-ui, sans-serif'
         }
       });
-      return mermaid.run({ nodes: diagrams });
+      // Uno por uno: si un diagrama falla, los demás no muestran un aviso falso
+      return [].slice.call(diagrams).reduce(function (chain, d) {
+        return chain.then(function () { return mermaid.run({ nodes: [d] }); }).catch(function (err) {
+          console.error(err); d.insertAdjacentHTML('afterend', '<p class="callout warn">No se pudo dibujar este diagrama.</p>');
+        });
+      }, Promise.resolve());
     }).catch(function () {
       diagrams.forEach(function (d) {
         d.insertAdjacentHTML('afterend', '<p class="callout warn">No se pudo cargar Mermaid (¿sin conexión?). Arriba se muestra el código fuente del diagrama.</p>');
