@@ -57,52 +57,19 @@
   </table></div>
   <p>Entornos: <code>dev</code> (rama <code>development</code>) con todos los módulos; <code>prod</code> (rama <code>main</code>, con aprobación) hoy solo declara Cognito, gateway, KMS, datos y secretos.</p>
 
-  <h2 id="componentes">Diagrama de componentes</h2>
-  <div class="diagram"><pre class="mermaid">
-flowchart LR
-  subgraph Cliente["GuardianMesh-front: PWA y Android"]
-    UI["React 19 + TypeScript"]
-    RTC["WebRTC + captura PCM 16 kHz"]
-  end
-  subgraph AWS["AWS us-east-1 - Terraform"]
-    COG["Cognito + Google IdP"]
-    GW["API Gateway HTTP + Lambda gateway"]
-    WSC["API Gateway WebSocket + Lambdas señalización"]
-    WSN["API Gateway WebSocket + Lambda avisos"]
-    SCH["EventBridge Scheduler"]
-    BR["Bedrock: Nova Lite y Voxtral"]
-    SM["Secrets Manager"]
-    DDB[("DynamoDB")]
-    K1["KMS pii"]
-    K2["KMS secrets"]
-    K3["KMS logs"]
-  end
-  UI -- "HTTPS + access token" --> GW
-  UI -- "WSS" --> WSC
-  UI -- "WSS" --> WSN
-  UI -. "OAuth + PKCE" .-> COG
-  GW --> DDB
-  GW --> BR
-  GW --> SM
-  GW -- "risk:update" --> WSC
-  GW -- "notification" --> WSN
-  WSC --> DDB
-  WSC --> SCH
-  WSN --> DDB
-  DDB --- K1
-  SM --- K2
-  GW --- K3
-  WSC --- K3
-  WSN --- K3
-  GW -. "JWKS" .-> COG
-  WSC -. "JWKS" .-> COG
-  WSN -. "JWKS" .-> COG
-  </pre></div>
-  <figure class="image-slot">
-    <img src="assets/img/diagrama-componentes.png" alt="Diagrama de componentes (imagen propia)" hidden>
-    <div class="slot-empty"><strong>Espacio para imagen: diagrama de componentes</strong>Exporta tu diagrama en alta resolución y guárdalo como <code>assets/img/diagrama-componentes.png</code>. Aparecerá aquí automáticamente.</div>
-    <figcaption>Diagrama de componentes (versión exportada)</figcaption>
+  <h2 id="componentes">Diagrama de componentes (C4)</h2>
+  <p>Modelo C4 dibujado con la librería oficial de draw.io. El nivel 2 muestra los contenedores desplegados; el nivel 3 abre el gateway y sus componentes de código.</p>
+  <figure class="c4" id="c4-contenedores" data-src="assets/diagrams/c4-contenedores.svg">
+    <div class="c4-bar"><strong>Nivel 2 · Contenedores</strong><span><button type="button" data-z="-" aria-label="Alejar">−</button><button type="button" data-z="+" aria-label="Acercar">+</button><button type="button" data-z="0">Ajustar</button><button type="button" data-z="full">Pantalla completa</button></span></div>
+    <div class="c4-view"><img src="assets/diagrams/c4-contenedores.svg" alt="Diagrama C4 de contenedores de GuardianMesh"></div>
+    <figcaption>Pasa el cursor sobre un elemento para ver sus relaciones; acerca y arrastra para moverte.</figcaption>
   </figure>
+  <figure class="c4" id="c4-componentes" data-src="assets/diagrams/c4-componentes.svg">
+    <div class="c4-bar"><strong>Nivel 3 · Componentes del gateway</strong><span><button type="button" data-z="-" aria-label="Alejar">−</button><button type="button" data-z="+" aria-label="Acercar">+</button><button type="button" data-z="0">Ajustar</button><button type="button" data-z="full">Pantalla completa</button></span></div>
+    <div class="c4-view"><img src="assets/diagrams/c4-componentes.svg" alt="Diagrama C4 de componentes de GuardianMesh"></div>
+    <figcaption>Pasa el cursor sobre un elemento para ver sus relaciones; acerca y arrastra para moverte.</figcaption>
+  </figure>
+  <p><a href="assets/diagrams/guardianmesh-c4.drawio" download>Descargar el archivo editable (.drawio)</a></p>
 
   <h2 id="secuencia">Secuencia extremo a extremo</h2>
   <p>Llamada, evaluación de riesgo, desafío familiar y aviso a la Red de Confianza.</p>
@@ -150,33 +117,14 @@ sequenceDiagram
   </figure>
 
   <h2 id="estados">Máquinas de estado</h2>
+  <p>Las dos máquinas son interactivas: los botones muestran únicamente las transiciones válidas del estado actual.</p>
   <h3>Ciclo de vida de la llamada</h3>
-  <div class="diagram"><pre class="mermaid">
-stateDiagram-v2
-  [*] --> ringing
-  ringing --> accepted: call:accept
-  ringing --> rejected: call:reject
-  ringing --> timeout: 30 s sin respuesta
-  ringing --> ended: cuelga el llamante
-  accepted --> ended: hangup
-  accepted --> failed: falla WebRTC
-  rejected --> [*]
-  timeout --> [*]
-  ended --> [*]
-  failed --> [*]
-  </pre></div>
+  <div class="scene3d" data-scene="llamada"></div>
+  <details class="s3-table"><summary>Ver tabla de transiciones</summary><div class="table-wrap"><table><thead><tr><th>Desde</th><th>Evento</th><th>Hacia</th></tr></thead><tbody><tr><td><code>inicio</code></td><td><code>call:init</code></td><td><code>ringing</code></td></tr><tr><td><code>inicio</code></td><td>ocupado o no disponible</td><td><code>ended</code></td></tr><tr><td><code>ringing</code></td><td><code>call:accept</code></td><td><code>accepted</code></td></tr><tr><td><code>ringing</code></td><td><code>call:reject</code></td><td><code>rejected</code></td></tr><tr><td><code>ringing</code></td><td>30 s sin respuesta</td><td><code>timeout</code></td></tr><tr><td><code>ringing</code></td><td>cuelga o se desconecta</td><td><code>ended</code></td></tr><tr><td><code>accepted</code></td><td>hangup o desconexión</td><td><code>ended</code></td></tr><tr><td><code>accepted</code></td><td>falla WebRTC</td><td><code>failed</code></td></tr></tbody></table></div></details>
   <h3>Nivel de riesgo</h3>
-  <div class="diagram"><pre class="mermaid">
-stateDiagram-v2
-  [*] --> GREEN
-  GREEN --> AMBER: score 40 a 69
-  GREEN --> RED: regla dura o score 70+
-  AMBER --> RED: regla dura o score 70+
-  AMBER --> GREEN: score bajo
-  RED --> AMBER: histéresis 15 s
-  RED --> GREEN: desafío familiar acertado
-  AMBER --> GREEN: desafío familiar acertado
-  </pre></div>
+  <div class="scene3d" data-scene="riesgo"></div>
+  <p class="s3-note">La celda es una metáfora: en el producto, RED alerta a la persona, que puede colgar y avisar a su Red de Confianza.</p>
+  <details class="s3-table"><summary>Ver tabla de transiciones</summary><div class="table-wrap"><table><thead><tr><th>Desde</th><th>Evento</th><th>Hacia</th></tr></thead><tbody><tr><td><code>GREEN</code></td><td>score 40 a 69 (si el desafío no está verificado)</td><td><code>AMBER</code></td></tr><tr><td><code>GREEN</code></td><td>regla dura o score 70+</td><td><code>RED</code></td></tr><tr><td><code>AMBER</code></td><td>regla dura, score 70+ o desafío fallido</td><td><code>RED</code></td></tr><tr><td><code>AMBER</code></td><td>score bajo</td><td><code>GREEN</code></td></tr><tr><td><code>AMBER</code></td><td>desafío familiar acertado</td><td><code>GREEN</code></td></tr><tr><td><code>RED</code></td><td>score 40 a 69</td><td><code>AMBER</code></td></tr><tr><td><code>RED</code></td><td>score bajo antes de 15 s (histéresis)</td><td><code>AMBER</code></td></tr><tr><td><code>RED</code></td><td>score bajo tras 15 s</td><td><code>GREEN</code></td></tr><tr><td><code>RED</code></td><td>desafío familiar acertado</td><td><code>GREEN</code></td></tr></tbody></table></div></details>
   <p>Las transiciones de la llamada son condicionales en DynamoDB: gana el primer escritor. Las reglas duras (<code>desafio_fallido</code>, <code>dinero_mas_urgencia</code>, <code>clonacion_vocal</code>, <code>suplantacion_biometrica</code>) fuerzan RED con score 100.</p>
 
   <h2 id="datos">Modelo de datos DynamoDB</h2>
@@ -278,5 +226,7 @@ erDiagram
 </div></main>
 <footer class="foot">GuardianMesh · IETI / SWNT 2026-2 · Documentación generada desde la rama <code>development</code>.</footer>
 <script src="assets/app.js"></script>
+<script src="assets/c4-viewer.js"></script>
+<script type="module" src="assets/scene3d.js"></script>
 </body>
 </html>
