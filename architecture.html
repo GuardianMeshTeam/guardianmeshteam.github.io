@@ -57,12 +57,19 @@
   </table></div>
   <p>Entornos: <code>dev</code> (rama <code>development</code>) con todos los módulos; <code>prod</code> (rama <code>main</code>, con aprobación) hoy solo declara Cognito, gateway, KMS, datos y secretos.</p>
 
-  <h2 id="componentes">Diagrama de componentes</h2>
-  <figure class="image-slot">
-    <img src="assets/img/diagrama-componentes.png" alt="Arquitectura de componentes AWS" hidden>
-    <div class="slot-empty"><strong>Arquitectura de Componentes AWS</strong>Guarda la imagen exportada como <code>assets/img/diagrama-componentes.png</code></div>
-    <figcaption>Arquitectura de componentes en AWS (us-east-1)</figcaption>
+  <h2 id="componentes">Diagrama de componentes (C4)</h2>
+  <p>Modelo C4 dibujado con la librería oficial de draw.io. El nivel 2 muestra los contenedores desplegados; el nivel 3 abre el gateway y sus componentes de código.</p>
+  <figure class="c4" id="c4-contenedores" data-src="assets/diagrams/c4-contenedores.svg">
+    <div class="c4-bar"><strong>Nivel 2 · Contenedores</strong><span><button type="button" data-z="-" aria-label="Alejar">−</button><button type="button" data-z="+" aria-label="Acercar">+</button><button type="button" data-z="0">Ajustar</button><button type="button" data-z="full">Pantalla completa</button></span></div>
+    <div class="c4-view"><img src="assets/diagrams/c4-contenedores.svg" alt="Diagrama C4 de contenedores de GuardianMesh"></div>
+    <figcaption>Pasa el cursor sobre un elemento para ver sus relaciones; acerca y arrastra para moverte.</figcaption>
   </figure>
+  <figure class="c4" id="c4-componentes" data-src="assets/diagrams/c4-componentes.svg">
+    <div class="c4-bar"><strong>Nivel 3 · Componentes del gateway</strong><span><button type="button" data-z="-" aria-label="Alejar">−</button><button type="button" data-z="+" aria-label="Acercar">+</button><button type="button" data-z="0">Ajustar</button><button type="button" data-z="full">Pantalla completa</button></span></div>
+    <div class="c4-view"><img src="assets/diagrams/c4-componentes.svg" alt="Diagrama C4 de componentes de GuardianMesh"></div>
+    <figcaption>Pasa el cursor sobre un elemento para ver sus relaciones; acerca y arrastra para moverte.</figcaption>
+  </figure>
+  <p><a href="assets/diagrams/guardianmesh-c4.drawio" download>Descargar el archivo editable (.drawio)</a></p>
 
   <h2 id="secuencia">Secuencia extremo a extremo</h2>
   <p>Llamada, evaluación de riesgo, desafío familiar y aviso a la Red de Confianza.</p>
@@ -105,12 +112,15 @@ sequenceDiagram
   </pre></div>
 
   <h2 id="estados">Máquinas de estado</h2>
-  <figure class="image-slot">
-    <img src="assets/img/diagrama-estados.png" alt="Máquinas de estado de la llamada y del semáforo" hidden>
-    <div class="slot-empty"><strong>Máquinas de Estado: Llamada y Semáforo</strong>Guarda la imagen exportada como <code>assets/img/diagrama-estados.png</code></div>
-    <figcaption>Máquinas de estado: ciclo de vida de la llamada y nivel de riesgo</figcaption>
-  </figure>
-    <p>Las transiciones de la llamada son condicionales en DynamoDB: gana el primer escritor. Las reglas duras (<code>desafio_fallido</code>, <code>dinero_mas_urgencia</code>, <code>clonacion_vocal</code>, <code>suplantacion_biometrica</code>) fuerzan RED con score 100.</p>
+  <p>Las dos máquinas son interactivas: los botones muestran únicamente las transiciones válidas del estado actual.</p>
+  <h3>Ciclo de vida de la llamada</h3>
+  <div class="scene3d" data-scene="llamada"></div>
+  <details class="s3-table"><summary>Ver tabla de transiciones</summary><div class="table-wrap"><table><thead><tr><th>Desde</th><th>Evento</th><th>Hacia</th></tr></thead><tbody><tr><td><code>inicio</code></td><td><code>call:init</code></td><td><code>ringing</code></td></tr><tr><td><code>inicio</code></td><td>ocupado o no disponible</td><td><code>ended</code></td></tr><tr><td><code>ringing</code></td><td><code>call:accept</code></td><td><code>accepted</code></td></tr><tr><td><code>ringing</code></td><td><code>call:reject</code></td><td><code>rejected</code></td></tr><tr><td><code>ringing</code></td><td>30 s sin respuesta</td><td><code>timeout</code></td></tr><tr><td><code>ringing</code></td><td>cuelga o se desconecta</td><td><code>ended</code></td></tr><tr><td><code>accepted</code></td><td>hangup o desconexión</td><td><code>ended</code></td></tr><tr><td><code>accepted</code></td><td>falla WebRTC</td><td><code>failed</code></td></tr></tbody></table></div></details>
+  <h3>Nivel de riesgo</h3>
+  <div class="scene3d" data-scene="riesgo"></div>
+  <p class="s3-note">La celda es una metáfora: en el producto, RED alerta a la persona, que puede colgar y avisar a su Red de Confianza.</p>
+  <details class="s3-table"><summary>Ver tabla de transiciones</summary><div class="table-wrap"><table><thead><tr><th>Desde</th><th>Evento</th><th>Hacia</th></tr></thead><tbody><tr><td><code>GREEN</code></td><td>score 40 a 69 (si el desafío no está verificado)</td><td><code>AMBER</code></td></tr><tr><td><code>GREEN</code></td><td>regla dura o score 70+</td><td><code>RED</code></td></tr><tr><td><code>AMBER</code></td><td>regla dura, score 70+ o desafío fallido</td><td><code>RED</code></td></tr><tr><td><code>AMBER</code></td><td>score bajo</td><td><code>GREEN</code></td></tr><tr><td><code>AMBER</code></td><td>desafío familiar acertado</td><td><code>GREEN</code></td></tr><tr><td><code>RED</code></td><td>score 40 a 69</td><td><code>AMBER</code></td></tr><tr><td><code>RED</code></td><td>score bajo antes de 15 s (histéresis)</td><td><code>AMBER</code></td></tr><tr><td><code>RED</code></td><td>score bajo tras 15 s</td><td><code>GREEN</code></td></tr><tr><td><code>RED</code></td><td>desafío familiar acertado</td><td><code>GREEN</code></td></tr></tbody></table></div></details>
+  <p>Las transiciones de la llamada son condicionales en DynamoDB: gana el primer escritor. Las reglas duras (<code>desafio_fallido</code>, <code>dinero_mas_urgencia</code>, <code>clonacion_vocal</code>, <code>suplantacion_biometrica</code>) fuerzan RED con score 100.</p>
 
   <h2 id="datos">Modelo de datos DynamoDB</h2>
   <figure class="image-slot">
@@ -177,5 +187,7 @@ sequenceDiagram
 </div></main>
 <footer class="foot">GuardianMesh · IETI / SWNT 2026-2 · Documentación generada desde la rama <code>development</code>.</footer>
 <script src="assets/app.js"></script>
+<script src="assets/c4-viewer.js"></script>
+<script type="module" src="assets/scene3d.js"></script>
 </body>
 </html>
