@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GuardianMesh · Seguridad, privacidad y calidad</title>
+<meta name="description" content="Controles de seguridad, privacidad zero-storage, cifrado, STRIDE, DevSecOps y atributos ISO/IEC 25010 de GuardianMesh.">
+<meta name="theme-color" content="#1769A6">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><img src="assets/logo-guardianmesh.svg" alt="" width="36" height="36">GuardianMesh</a>
+  <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="sidebar">☰ Menú</button>
+</header>
+<div class="scrim" id="scrim"></div>
+<aside class="sidebar" id="sidebar" aria-label="Navegación">
+  <a class="brand" href="index.html"><img src="assets/logo-guardianmesh.svg" alt="" width="36" height="36"><span>GuardianMesh<small>Documentación técnica</small></span></a>
+  <nav class="nav">
+    <a href="index.html">Visión general</a>
+    <a href="architecture.html">Arquitectura</a>
+    <a href="ai-engine.html">Motor de IA</a>
+    <a href="security.html" aria-current="page">Seguridad y calidad</a>
+    <a href="scope.html">Alcance y hoja de ruta</a>
+  </nav>
+  <div class="toc"><p>En esta página</p><div id="toc-list"></div></div>
+</aside>
+
+<main id="contenido"><div class="content">
+  <p class="eyebrow">Seguridad</p>
+  <h1>Seguridad, privacidad y calidad</h1>
+  <p class="lead">GuardianMesh protege a personas vulnerables, así que la seguridad es parte del producto: identidad fuerte, mínimo almacenamiento de datos sensibles y controles automatizados en el pipeline.</p>
+
+  <h2 id="auth">Autenticación y autorización</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Control</th><th>Detalle</th></tr></thead>
+    <tbody>
+      <tr><td>Identidad</td><td>Amazon Cognito con <strong>Google</strong> como IdP federado (OAuth 2.0 + PKCE) o correo y contraseña (≥ 12 caracteres con mayúscula, minúscula, número y símbolo).</td></tr>
+      <tr><td>Verificación del token</td><td>Solo <em>access tokens</em> <strong>RS256</strong> validados por firma contra el <strong>JWKS</strong> del pool, issuer exacto, <code>client_id</code>, <code>token_use=access</code> y expiración. Se rechaza el algoritmo <code>none</code>. Los mismos controles aplican en gateway, señalización y avisos.</td></tr>
+      <tr><td>Claim <code>aal2</code></td><td>Lo añade el trigger pre-token V2_0 solo en inicios de sesión completos; sin él, <code>403 insufficient_aal</code>. Las rutas de riesgo lo vuelven a comprobar (defensa en profundidad).</td></tr>
+      <tr><td>Identidad confiable</td><td>El gateway descarta cualquier cabecera de usuario del cliente y la reemplaza por una derivada del <code>sub</code> verificado.</td></tr>
+      <tr><td>Aislamiento</td><td>Estado, desafíos y huellas se indexan por <code>sub</code> y solo con contactos <strong>aceptados</strong>.</td></tr>
+      <tr><td>Android</td><td>Los tokens viven en el Keystore mediante <code>Capacitor Secure Storage</code>, no en <code>localStorage</code>. Solo HTTPS, <code>allowMixedContent=false</code> y backups desactivados.</td></tr>
+      <tr><td>Anti-enumeración</td><td>Invitar por correo responde siempre igual; <code>forbidden</code> es idéntico para "no participante" y "no existe".</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><p>El segundo factor TOTP ya <strong>no está activo</strong> (<code>mfa_configuration = OFF</code>). El nombre <code>aal2</code> se conserva por compatibilidad y significa "sesión con inicio de sesión completo".</p></div>
+
+  <h2 id="privacidad">Privacidad Zero-Storage</h2>
+  <ul>
+    <li><strong>En el teléfono:</strong> el audio del otro participante se guarda solo en un búfer circular en RAM (<code>SampleRing</code>, ventana de ~15 s, PCM16 a 16 kHz). Nada se escribe a disco ni se registra.</li>
+    <li><strong>En el servidor:</strong> el audio y la transcripción se procesan durante la invocación y <strong>no se persisten</strong>. Solo se guardan huella vocal, digests HMAC, estado y contadores, con TTL.</li>
+    <li><strong>Logs:</strong> no se registran prompts, transcripciones, respuestas del modelo, SDP, ICE ni tokens. Los loggers de <code>boto3</code>, <code>botocore</code>, <code>urllib3</code> y <code>websockets</code> se fijan en WARNING.</li>
+    <li><strong>Diagnóstico:</strong> la respuesta de riesgo nunca cita la llamada; solo viajan nombres de señales.</li>
+  </ul>
+
+  <h2 id="cifrado">Cifrado y criptografía</h2>
+  <div class="grid">
+    <div class="card"><h3>3 CMK en AWS KMS</h3><p><span class="badge">pii</span><span class="badge">secrets</span><span class="badge">logs</span></p><p>Una llave por clase de dato, con rotación automática, contexto de cifrado y administración separada. El estado de Terraform tiene su propia CMK.</p></div>
+    <div class="card"><h3>Secrets Manager</h3><p>Guarda la clave HMAC del desafío (≥ 32 bytes). Terraform declara el contenedor, <strong>nunca el valor</strong>. Se rechazan claves débiles.</p></div>
+    <div class="card"><h3>Desafío familiar HMAC-SHA256</h3><p>Pregunta y respuesta se normalizan (NFKC, minúsculas, sin tildes) y solo se guarda su HMAC ligado al contacto. Comparación con <code>hmac.compare_digest</code>; falla cerrado.</p></div>
+  </div>
+  <p><strong>Límites de intentos:</strong> hasta <strong>5</strong> por usuario, llamada y contacto, y 10 por hora y contacto (ventana actual y previa). Un acierto devuelve los intentos reservados. Al agotarse, <code>429 challenge_locked</code>.</p>
+  <p>Otros límites: 30 evaluaciones/min, 10 invitaciones/hora, 5 avisos/min, 10 <code>call:init</code>/min; cuerpo ≤ 4 MiB; mensaje WebSocket ≤ 16 KiB.</p>
+
+  <h2 id="stride">Matriz de amenazas STRIDE</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Cat.</th><th>Amenaza</th><th>Control implementado</th></tr></thead>
+    <tbody>
+      <tr><td><strong>S</strong> Suplantación</td><td>Token falsificado o de otro pool; llamante que se hace pasar por un familiar</td><td>RS256 + JWKS + issuer/client; <code>aal2</code>; biometría RMS/ZCR (umbral 0,70) y desafío HMAC; el emisor siempre es la conexión autenticada</td></tr>
+      <tr><td><strong>T</strong> Manipulación</td><td>Prompt injection en la transcripción; alteración de mensajes WebSocket</td><td>Delimitadores y eliminación de etiquetas, suelo de reglas OR/máx., validación JSON Schema; eventos validados y SDP opaco</td></tr>
+      <tr><td><strong>R</strong> Repudio</td><td>Negar una alerta o un aviso</td><td>Historial por participante y avisos con <code>senderId</code> verificado, con TTL</td></tr>
+      <tr><td><strong>I</strong> Divulgación</td><td>Fuga de audio, transcripciones o tokens; enumeración de cuentas</td><td>Zero-Storage, logs redactados, 3 CMK, respuestas uniformes, aislamiento por <code>sub</code></td></tr>
+      <tr><td><strong>D</strong> Denegación</td><td>Inundación de evaluaciones o llamadas; costo de IA descontrolado</td><td>Límites por usuario antes de invocar modelos, tope de 60 s de audio, throttling 50 rps/100 ráfaga, concurrencia reservada, timeout de timbre 30 s</td></tr>
+      <tr><td><strong>E</strong> Elevación</td><td>Saltarse AAL2 o leer datos de otro usuario</td><td>Política única en el núcleo; <code>AAL2_OPT_OUT_PATHS</code> no puede cubrir llamadas ni contactos; IAM de mínimo privilegio y modelos Bedrock fijados por ARN</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="devsecops">DevSecOps en CI/CD</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Gate (bloqueante)</th><th>Herramienta</th></tr></thead>
+    <tbody>
+      <tr><td>Secretos en todo el historial</td><td>Gitleaks</td></tr>
+      <tr><td>Seguridad de la IaC</td><td>Checkov</td></tr>
+      <tr><td>Dependencias vulnerables</td><td>pip-audit (infra) y <code>npm audit --omit=dev</code> (front)</td></tr>
+      <tr><td>Calidad y SAST de Python</td><td>ruff (incluye reglas <code>S</code> de bandit), shellcheck, yamllint</td></tr>
+      <tr><td>Terraform</td><td><code>terraform fmt</code>, tflint, <code>validate</code>; pruebas contra el schema del provider</td></tr>
+      <tr><td>Despliegue sin llaves</td><td>GitHub Actions con <strong>OIDC</strong> (sin access keys), rol de plan de solo lectura y rol de apply; <code>prod</code> con aprobación y solo desde <code>main</code>; acciones fijadas por SHA</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><p><strong>Nota honesta sobre WAF:</strong> el módulo del gateway define reglas de AWS WAFv2 (IP reputation, reglas comunes, entradas maliciosas y límite por IP), pero <code>waf_enabled = false</code> en <code>dev</code>: WAFv2 no se asocia a una HTTP API v2. Hoy la protección perimetral es el throttling del API Gateway y la validación del JWT; activar WAF requiere migrar a REST API (Fase 2).</p></div>
+
+  <h2 id="iso25010">Atributos de calidad ISO/IEC 25010</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Atributo</th><th>Evidencia</th></tr></thead>
+    <tbody>
+      <tr><td>Seguridad</td><td>Controles de las secciones anteriores; pruebas de contrato del verificador de tokens y de aislamiento por usuario</td></tr>
+      <tr><td>Fiabilidad y disponibilidad</td><td>Degradación controlada (LLM → regex; orquestador ≥ AMBER); PITR en DynamoDB; fallos de publicación o historial no alteran la respuesta; Scheduler con borrado automático</td></tr>
+      <tr><td>Eficiencia / FinOps</td><td>Serverless on-demand, TTL, límites antes de invocar IA, <code>temperature 0</code>, 400/600 tokens, modelos pequeños</td></tr>
+      <tr><td>Mantenibilidad</td><td>Arquitectura hexagonal, <code>mypy</code> con <code>disallow_untyped_defs</code>, ruff, cobertura ≥ 80 % bloqueante en communications e infra, TypeScript <code>tsc -b</code>; 39 archivos de test en api, 19 en communications, 49 en front y 14 en infra</td></tr>
+      <tr><td>Portabilidad</td><td>Mismo núcleo en FastAPI local y Lambda; PWA y Android desde el mismo código</td></tr>
+      <tr><td>Usabilidad</td><td>Color siempre acompañado de texto, voz y vibración; áreas de toque de 56 px; contraste AA</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><p>Los resultados de ejecución de las pruebas no se citan aquí: deben reejecutarse en Python 3.12 antes de publicarse como evidencia.</p></div>
+</div></main>
+<footer class="foot">GuardianMesh · IETI / SWNT 2026-2 · Documentación generada desde la rama <code>development</code>.</footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GuardianMesh · Arquitectura técnica</title>
+<meta name="description" content="Arquitectura hexagonal, despliegue serverless en AWS, diagramas, endpoints y eventos de GuardianMesh.">
+<meta name="theme-color" content="#1769A6">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><img src="assets/logo-guardianmesh.svg" alt="" width="36" height="36">GuardianMesh</a>
+  <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="sidebar">☰ Menú</button>
+</header>
+<div class="scrim" id="scrim"></div>
+<aside class="sidebar" id="sidebar" aria-label="Navegación">
+  <a class="brand" href="index.html"><img src="assets/logo-guardianmesh.svg" alt="" width="36" height="36"><span>GuardianMesh<small>Documentación técnica</small></span></a>
+  <nav class="nav">
+    <a href="index.html">Visión general</a>
+    <a href="architecture.html" aria-current="page">Arquitectura</a>
+    <a href="ai-engine.html">Motor de IA</a>
+    <a href="security.html">Seguridad y calidad</a>
+    <a href="scope.html">Alcance y hoja de ruta</a>
+  </nav>
+  <div class="toc"><p>En esta página</p><div id="toc-list"></div></div>
+</aside>
+
+<main id="contenido"><div class="content">
+  <p class="eyebrow">Arquitectura</p>
+  <h1>Arquitectura técnica y diagramas</h1>
+  <p class="lead">Núcleo de dominio puro, adaptadores intercambiables y despliegue serverless en AWS <code>us-east-1</code>, descrito como código con Terraform.</p>
+
+  <h2 id="hexagonal">Arquitectura hexagonal</h2>
+  <p>Los repositorios de backend separan tres capas. El mismo núcleo se ejecuta en un servidor local y en AWS Lambda; no hay una segunda implementación de la política "para Lambda".</p>
+  <div class="grid">
+    <div class="card"><h3><code>core</code></h3><p>Dominio puro: sin boto3, HTTP ni frameworks. Los puertos son <code>typing.Protocol</code>. Un test (<code>test_core_purity.py</code>) lo verifica.</p></div>
+    <div class="card"><h3><code>adapters</code></h3><p>DynamoDB, Bedrock, Secrets Manager, API Gateway Management API, EventBridge Scheduler, SES y versiones en memoria.</p></div>
+    <div class="card"><h3><code>interfaces</code></h3><p>Transporte: handler de Lambda (HTTP API v2 y WebSocket) y servidores locales (FastAPI en api; <code>local_server</code> en communications).</p></div>
+  </div>
+  <div class="callout"><p><strong>Decisión clave:</strong> la Lambda valida el JWT; API Gateway solo enruta (no hay <code>aws_apigatewayv2_authorizer</code>). Una sola implementación de la política evita divergencias silenciosas.</p></div>
+
+  <h2 id="despliegue">Despliegue serverless en AWS</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Pieza</th><th>Servicio</th><th>Detalle</th></tr></thead>
+    <tbody>
+      <tr><td>Identidad</td><td>Amazon Cognito</td><td>Tier ESSENTIALS, Google como IdP, access token 60 min, trigger pre-token V2_0 (<code>aal: "aal2"</code>)</td></tr>
+      <tr><td>API HTTP</td><td>API Gateway HTTP API + Lambda</td><td>Python 3.12, 1024 MB, 10 s, CORS <code>GET, POST, OPTIONS</code></td></tr>
+      <tr><td>Señalización</td><td>API Gateway WebSocket + 2 Lambdas</td><td>256 MB, 15 s; timeout de timbre con EventBridge Scheduler</td></tr>
+      <tr><td>Avisos</td><td>API Gateway WebSocket + Lambda</td><td>Entrega en vivo y pendientes en DynamoDB</td></tr>
+      <tr><td>IA</td><td>Amazon Bedrock (Converse API)</td><td><code>us.amazon.nova-lite-v1:0</code> y <code>mistral.voxtral-small-24b-2507</code></td></tr>
+      <tr><td>Datos</td><td>DynamoDB on-demand</td><td>PITR, TTL <code>expires_at</code>, cifrado con CMK <code>pii</code></td></tr>
+      <tr><td>Secretos y claves</td><td>Secrets Manager + KMS</td><td>3 CMK: <code>pii</code>, <code>secrets</code>, <code>logs</code></td></tr>
+    </tbody>
+  </table></div>
+  <p>Entornos: <code>dev</code> (rama <code>development</code>) con todos los módulos; <code>prod</code> (rama <code>main</code>, con aprobación) hoy solo declara Cognito, gateway, KMS, datos y secretos.</p>
+
+  <h2 id="componentes">Diagrama de componentes</h2>
+  <div class="diagram"><pre class="mermaid">
+flowchart LR
+  subgraph Cliente["GuardianMesh-front: PWA y Android"]
+    UI["React 19 + TypeScript"]
+    RTC["WebRTC + captura PCM 16 kHz"]
+  end
+  subgraph AWS["AWS us-east-1 - Terraform"]
+    COG["Cognito + Google IdP"]
+    GW["API Gateway HTTP + Lambda gateway"]
+    WSC["API Gateway WebSocket + Lambdas señalización"]
+    WSN["API Gateway WebSocket + Lambda avisos"]
+    SCH["EventBridge Scheduler"]
+    BR["Bedrock: Nova Lite y Voxtral"]
+    SM["Secrets Manager"]
+    DDB[("DynamoDB")]
+    K1["KMS pii"]
+    K2["KMS secrets"]
+    K3["KMS logs"]
+  end
+  UI -- "HTTPS + access token" --> GW
+  UI -- "WSS" --> WSC
+  UI -- "WSS" --> WSN
+  UI -. "OAuth + PKCE" .-> COG
+  GW --> DDB
+  GW --> BR
+  GW --> SM
+  GW -- "risk:update" --> WSC
+  GW -- "notification" --> WSN
+  WSC --> DDB
+  WSC --> SCH
+  WSN --> DDB
+  DDB --- K1
+  SM --- K2
+  GW --- K3
+  WSC --- K3
+  WSN --- K3
+  GW -. "JWKS" .-> COG
+  WSC -. "JWKS" .-> COG
+  WSN -. "JWKS" .-> COG
+  </pre></div>
+  <figure class="image-slot">
+    <img src="assets/img/diagrama-componentes.png" alt="Diagrama de componentes (imagen propia)" hidden>
+    <div class="slot-empty"><strong>Espacio para imagen: diagrama de componentes</strong>Exporta tu diagrama en alta resolución y guárdalo como <code>assets/img/diagrama-componentes.png</code>. Aparecerá aquí automáticamente.</div>
+    <figcaption>Diagrama de componentes (versión exportada)</figcaption>
+  </figure>
+
+  <h2 id="secuencia">Secuencia extremo a extremo</h2>
+  <p>Llamada, evaluación de riesgo, desafío familiar y aviso a la Red de Confianza.</p>
+  <div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  autonumber
+  participant A as Llamante
+  participant S as Señalización
+  participant B as Receptor
+  participant G as Gateway
+  participant M as Bedrock
+  participant D as DynamoDB
+  A->>S: auth y call:init
+  S->>D: crea llamada ringing + schedule 30 s
+  S-->>B: call:incoming
+  B->>S: call:accept
+  S-->>A: call:accepted
+  A->>S: call:offer e ICE
+  S-->>B: offer e ICE
+  B->>S: call:answer e ICE
+  S-->>A: answer e ICE
+  Note over A,B: Audio WebRTC P2P, no pasa por AWS
+  loop cada 6 s aprox
+    B->>G: POST /calls/id/evaluate con audio 8 s
+    G->>M: Voxtral transcribe
+    G->>M: Nova Lite intención 3 s
+    G->>G: RMS/ZCR y orquestador
+    G->>D: estado e historial
+    G-->>B: nivel y justificación
+    G-->>B: risk:update por WebSocket
+  end
+  B->>G: POST /calls/id/challenge
+  G-->>B: verificado y nivel actualizado
+  B->>G: POST /notifications kind alert
+  G->>D: guarda aviso
+  G-->>B: 202 recipients
+  B->>S: call:end
+  S-->>A: call:ended
+  S-->>B: call:ended
+  </pre></div>
+  <figure class="image-slot">
+    <img src="assets/img/diagrama-secuencia.png" alt="Diagrama de secuencia (imagen propia)" hidden>
+    <div class="slot-empty"><strong>Espacio para imagen: diagrama de secuencia</strong>Guarda tu exportación como <code>assets/img/diagrama-secuencia.png</code>.</div>
+    <figcaption>Diagrama de secuencia (versión exportada)</figcaption>
+  </figure>
+
+  <h2 id="estados">Máquinas de estado</h2>
+  <h3>Ciclo de vida de la llamada</h3>
+  <div class="diagram"><pre class="mermaid">
+stateDiagram-v2
+  [*] --> ringing
+  ringing --> accepted: call:accept
+  ringing --> rejected: call:reject
+  ringing --> timeout: 30 s sin respuesta
+  ringing --> ended: cuelga el llamante
+  accepted --> ended: hangup
+  accepted --> failed: falla WebRTC
+  rejected --> [*]
+  timeout --> [*]
+  ended --> [*]
+  failed --> [*]
+  </pre></div>
+  <h3>Nivel de riesgo</h3>
+  <div class="diagram"><pre class="mermaid">
+stateDiagram-v2
+  [*] --> GREEN
+  GREEN --> AMBER: score 40 a 69
+  GREEN --> RED: regla dura o score 70+
+  AMBER --> RED: regla dura o score 70+
+  AMBER --> GREEN: score bajo
+  RED --> AMBER: histéresis 15 s
+  RED --> GREEN: desafío familiar acertado
+  AMBER --> GREEN: desafío familiar acertado
+  </pre></div>
+  <p>Las transiciones de la llamada son condicionales en DynamoDB: gana el primer escritor. Las reglas duras (<code>desafio_fallido</code>, <code>dinero_mas_urgencia</code>, <code>clonacion_vocal</code>, <code>suplantacion_biometrica</code>) fuerzan RED con score 100.</p>
+
+  <h2 id="datos">Modelo de datos DynamoDB</h2>
+  <div class="diagram"><pre class="mermaid">
+erDiagram
+  CALLS {
+    string call_id PK
+    string caller_id
+    string receiver_id
+    string status
+    number expires_at
+  }
+  CONNECTIONS {
+    string user_id PK
+    string connection_id
+    number expires_at
+  }
+  CONTACTS {
+    string user_id PK
+    string contact_id SK
+    string status
+  }
+  CALL_RISK {
+    string pk PK
+    number expires_at
+  }
+  CALL_HISTORY {
+    string user_id PK
+    string sk SK
+    string call_id
+    number expires_at
+  }
+  NOTIFICATIONS {
+    string pk PK
+    string sk SK
+    number expires_at
+  }
+  CONTACTS ||--o{ CALLS : "participan"
+  CALLS ||--o{ CALL_HISTORY : "una fila por participante"
+  CALLS ||--o{ CALL_RISK : "estado y contadores"
+  CONTACTS ||--o{ NOTIFICATIONS : "destinatarios"
+  </pre></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Tabla</th><th>Clave</th><th>Índices</th><th>Contenido</th></tr></thead>
+    <tbody>
+      <tr><td><code>calls</code></td><td><code>call_id</code></td><td>GSI <code>caller-status-index</code>, <code>receiver-status-index</code></td><td>Metadatos de llamada; nunca SDP ni ICE. TTL 7 días</td></tr>
+      <tr><td><code>connections</code></td><td><code>user_id</code></td><td>—</td><td>Conexión WebSocket autenticada por usuario</td></tr>
+      <tr><td><code>contacts</code></td><td><code>user_id</code> + <code>contact_id</code></td><td>—</td><td>Contactos, invitaciones y contador de invitaciones</td></tr>
+      <tr><td><code>call-risk</code></td><td><code>pk</code></td><td>—</td><td>Huellas vocales, digests HMAC del desafío, estado de llamada y contadores (TTL 2 h)</td></tr>
+      <tr><td><code>call-history</code></td><td><code>user_id</code> + <code>sk</code></td><td>LSI <code>call-id-index</code></td><td>Una fila por participante y el nivel máximo de riesgo</td></tr>
+      <tr><td><code>notifications</code></td><td><code>pk</code> + <code>sk</code></td><td>—</td><td>Avisos pendientes/entregados y contadores de límite</td></tr>
+    </tbody>
+  </table></div>
+  <p>Además existen <code>profiles</code> y <code>challenges</code> (módulo <code>data</code>) y las tablas de conexiones de avisos y de monitoreo. Las <strong>transcripciones y el audio no se guardan</strong>.</p>
+  <figure class="image-slot">
+    <img src="assets/img/diagrama-casos-uso.png" alt="Diagrama de casos de uso (imagen propia)" hidden>
+    <div class="slot-empty"><strong>Espacio para imagen: casos de uso</strong>Guarda tu exportación como <code>assets/img/diagrama-casos-uso.png</code>.</div>
+    <figcaption>Diagrama de casos de uso</figcaption>
+  </figure>
+  <figure class="image-slot">
+    <img src="assets/img/mockup-app.png" alt="Mockup de la app (imagen propia)" hidden>
+    <div class="slot-empty"><strong>Espacio para imagen: mockup / capturas de la app</strong>Guarda tu imagen como <code>assets/img/mockup-app.png</code>.</div>
+    <figcaption>Pantallas de la app Android</figcaption>
+  </figure>
+
+  <h2 id="endpoints">Endpoints HTTP</h2>
+  <p>Todas las rutas <code>/api/v1/*</code> exigen <code>Authorization: Bearer</code> con <code>aal2</code>, salvo las públicas.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Método</th><th>Ruta</th><th>Descripción</th></tr></thead>
+    <tbody>
+      <tr><td>GET</td><td><code>/healthz</code></td><td>Liveness (pública)</td></tr>
+      <tr><td>POST</td><td><code>/api/v1/auth/registration/verification-code</code> · <code>/verify-code</code></td><td>Código de verificación por SES (públicas)</td></tr>
+      <tr><td>GET</td><td><code>/api/v1/contacts</code></td><td>Lista de contactos</td></tr>
+      <tr><td>GET · POST</td><td><code>/api/v1/contacts/invitations</code></td><td>Listar / crear invitación</td></tr>
+      <tr><td>POST</td><td><code>/api/v1/contacts/invitations/accept</code> · <code>/reject</code> · <code>/contacts/remove</code> · <code>/contacts/trust</code></td><td>Gestión de contactos (máx. 3 de confianza)</td></tr>
+      <tr><td>POST</td><td><code>/api/v1/contacts/{contact_id}/security</code></td><td>Pregunta y respuesta secretas (HMAC) + huella vocal</td></tr>
+      <tr><td>POST</td><td><code>/api/v1/calls/{call_id}/evaluate</code></td><td>Texto y/o audio PCM → nivel, score, reglas</td></tr>
+      <tr><td>POST</td><td><code>/api/v1/calls/{call_id}/challenge</code></td><td>Responde la pregunta de seguridad</td></tr>
+      <tr><td>GET</td><td><code>/api/v1/calls/history</code> · <code>/{call_id}</code></td><td>Historial paginado y detalle</td></tr>
+      <tr><td>POST · GET</td><td><code>/api/v1/notifications</code></td><td>Crear aviso (202) / listar recibidos</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="eventos">Eventos WebSocket</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Dir.</th><th>Evento</th><th>Campos</th></tr></thead>
+    <tbody>
+      <tr><td>C→S</td><td><code>auth</code> · <code>ping</code></td><td><code>token</code> (primer mensaje, ≤ 10 s)</td></tr>
+      <tr><td>C→S</td><td><code>call:init</code></td><td><code>receiverId</code></td></tr>
+      <tr><td>C→S</td><td><code>call:accept</code> · <code>call:reject</code> · <code>call:end</code></td><td><code>callId</code> (<code>reason</code> en <code>end</code>)</td></tr>
+      <tr><td>C→S</td><td><code>call:offer</code> · <code>call:answer</code> · <code>call:ice-candidate</code></td><td><code>callId</code>, <code>payload</code></td></tr>
+      <tr><td>C→S</td><td><code>call:transcript</code></td><td><code>payload.text</code> 1–500 caracteres (laboratorio de riesgo)</td></tr>
+      <tr><td>S→C</td><td><code>auth:ok</code> · <code>pong</code> · <code>call:ringing</code> · <code>call:incoming</code> · <code>call:accepted</code> · <code>call:ended</code></td><td><code>callId</code>, <code>callerId</code>, <code>reason</code></td></tr>
+      <tr><td>S→C</td><td><code>call:error</code></td><td><code>unauthorized</code>, <code>replaced</code>, <code>invalid_message</code>, <code>invalid_receiver</code>, <code>already_in_call</code>, <code>rate_limited</code>, <code>forbidden</code>, <code>invalid_state</code></td></tr>
+      <tr><td>S→C</td><td><code>risk:update</code></td><td><code>callId</code>, <code>level</code>, <code>activateChallenge</code>, <code>reasonCode</code></td></tr>
+      <tr><td>Avisos</td><td><code>notification</code> / <code>ack</code></td><td><code>notificationId</code>, <code>kind</code>, <code>message</code>, <code>createdAt</code>, <code>senderId</code></td></tr>
+    </tbody>
+  </table></div>
+</div></main>
+<footer class="foot">GuardianMesh · IETI / SWNT 2026-2 · Documentación generada desde la rama <code>development</code>.</footer>
+<script src="assets/app.js"></script>
+</body>
+</html>

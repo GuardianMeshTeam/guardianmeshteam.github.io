@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GuardianMesh · Alcance y hoja de ruta</title>
+<meta name="description" content="Casos de uso, historias de usuario implementadas, alcance del MVP y hoja de ruta de la Fase 2 de GuardianMesh.">
+<meta name="theme-color" content="#1769A6">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header class="topbar">
+  <a class="brand" href="index.html"><img src="assets/logo-guardianmesh.svg" alt="" width="36" height="36">GuardianMesh</a>
+  <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="sidebar">☰ Menú</button>
+</header>
+<div class="scrim" id="scrim"></div>
+<aside class="sidebar" id="sidebar" aria-label="Navegación">
+  <a class="brand" href="index.html"><img src="assets/logo-guardianmesh.svg" alt="" width="36" height="36"><span>GuardianMesh<small>Documentación técnica</small></span></a>
+  <nav class="nav">
+    <a href="index.html">Visión general</a>
+    <a href="architecture.html">Arquitectura</a>
+    <a href="ai-engine.html">Motor de IA</a>
+    <a href="security.html">Seguridad y calidad</a>
+    <a href="scope.html" aria-current="page">Alcance y hoja de ruta</a>
+  </nav>
+  <div class="toc"><p>En esta página</p><div id="toc-list"></div></div>
+</aside>
+
+<main id="contenido"><div class="content">
+  <p class="eyebrow">Alcance</p>
+  <h1>Casos de uso, requisitos y hoja de ruta</h1>
+  <p class="lead">Qué hace hoy GuardianMesh en la rama <code>development</code> y qué queda para la Fase 2, sin sobredimensionar.</p>
+
+  <h2 id="casos">Casos de uso principales</h2>
+  <div class="grid">
+    <div class="card"><h3>Recibir una llamada protegida</h3><p>El usuario protegido acepta una llamada de un contacto y ve el semáforo en tiempo casi real.</p></div>
+    <div class="card"><h3>Verificar a un familiar</h3><p>En ámbar o rojo, responde la pregunta secreta acordada con ese contacto.</p></div>
+    <div class="card"><h3>Avisar a la Red de Confianza</h3><p>Cuelga y avisa a su contacto de confianza; el aviso llega por WebSocket y queda en DynamoDB si está desconectado.</p></div>
+    <div class="card"><h3>Gestionar contactos</h3><p>Invitar por correo, aceptar, eliminar y marcar hasta 3 contactos de confianza.</p></div>
+  </div>
+
+  <h2 id="hu">Historias de usuario implementadas</h2>
+  <p>Identificadores citados en el código y en las pruebas de la rama <code>development</code>.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>HU</th><th>Descripción</th><th>Evidencia</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td><strong>HU-04</strong></td><td>Desafío familiar con secreto compartido (HMAC-SHA256)</td><td><code>guardianmesh_challenge/desafio.py</code>; <code>/challenge</code></td><td><span class="badge ok">Implementada</span></td></tr>
+      <tr><td><strong>HU-16</strong></td><td>Orquestador de riesgo: reglas duras, fusión 60/40, histéresis 15 s</td><td><code>guardianmesh_orchestrator/orquestador.py</code></td><td><span class="badge ok">Implementada</span></td></tr>
+      <tr><td><strong>HU-17</strong></td><td>Agente de intención y urgencia (Nova Lite + fallback regex)</td><td><code>guardianmesh_intent/</code></td><td><span class="badge ok">Implementada</span></td></tr>
+      <tr><td><strong>HU-19</strong></td><td>Pregunta de seguridad por contacto</td><td>Pantalla <code>SecurityQuestionScreen</code>; <code>/contacts/{id}/security</code></td><td><span class="badge ok">Implementada</span></td></tr>
+      <tr><td><strong>HU-21</strong></td><td>Biometría vocal por huella (RMS/ZCR)</td><td><code>guardianmesh_voice/analizador.py</code></td><td><span class="badge warn">Heurística</span></td></tr>
+      <tr><td><strong>HU-22</strong></td><td>Detección de voz sintética por planitud</td><td><code>guardianmesh_voice/analizador.py</code></td><td><span class="badge warn">Heurística</span></td></tr>
+      <tr><td><strong>HU-23</strong></td><td>Cascarón accesible de la persona adulta mayor</td><td><code>AppShell</code>, <code>CarmenHomeScreen</code></td><td><span class="badge ok">Implementada</span></td></tr>
+      <tr><td><strong>HU-26</strong></td><td>En ámbar o rojo, colgar y llamar al contacto de confianza</td><td><code>CallProvider.tsx</code></td><td><span class="badge ok">Implementada</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>También implementados: login con Google, registro con código por correo, directorio de contactos, historial de llamadas, avisos a la Red de Confianza por WebSocket y app Android con Capacitor.</p>
+
+  <h2 id="mvp-vs-f2">Alcance MVP actual vs. Roadmap Fase 2</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Tema</th><th>MVP actual</th><th>Roadmap Fase 2</th></tr></thead>
+    <tbody>
+      <tr><td>Llamadas</td><td>Audio 1:1 por WebRTC <strong>dentro de la app</strong></td><td>Llamadas por red telefónica (PSTN)</td></tr>
+      <tr><td>Avisos</td><td>WebSocket + DynamoDB (pendientes al reconectar)</td><td>Notificaciones push (FCM/APNs) y SMS</td></tr>
+      <tr><td>Biometría y anti-spoofing</td><td>Heurísticas estadísticas RMS/ZCR</td><td>Embeddings de locutor y modelo entrenado</td></tr>
+      <tr><td>Transcripción</td><td>Fragmentos de ~8 s cada ~6 s (casi tiempo real)</td><td>Streaming continuo</td></tr>
+      <tr><td>NAT / conectividad</td><td>STUN público (<code>VITE_ICE_SERVERS</code>)</td><td>Servidor TURN propio</td></tr>
+      <tr><td>Despliegue</td><td><code>dev</code> completo; <code>prod</code> con Cognito, gateway, KMS, datos y secretos</td><td>Señalización, riesgo y avisos en <code>prod</code></td></tr>
+      <tr><td>Perímetro</td><td>Throttling + validación JWT; <code>waf_enabled = false</code></td><td>WAF activo (requiere migrar a REST API)</td></tr>
+      <tr><td>Plataformas</td><td>PWA y Android (APK debug y release firmado)</td><td>Publicación en tienda e iOS</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><p><strong>Límites conocidos del MVP:</strong> el análisis lo ve solo quien recibe la llamada; las frases escritas del laboratorio (<code>VITE_RISK_LAB</code>) son una entrada de pruebas y no cambian el semáforo real; una sola región (<code>us-east-1</code>).</p></div>
+
+  <h2 id="roadmap">Hoja de ruta</h2>
+  <div class="grid">
+    <div class="card"><h3>Ahora</h3><p><span class="badge ok">Hecho</span> Riesgo en llamada, desafío familiar, historial, avisos y APK.</p></div>
+    <div class="card"><h3>Siguiente</h3><p><span class="badge warn">Pendiente</span> Reejecutar pruebas en Python 3.12, CI de tests en api y communications, limpiar rutas sin uso del front.</p></div>
+    <div class="card"><h3>Fase 2</h3><p><span class="badge">Planeado</span> PSTN, push/SMS, embeddings de voz, TURN, WAF y <code>prod</code> completo.</p></div>
+  </div>
+</div></main>
+<footer class="foot">GuardianMesh · IETI / SWNT 2026-2 · Documentación generada desde la rama <code>development</code>.</footer>
+<script src="assets/app.js"></script>
+</body>
+</html>
