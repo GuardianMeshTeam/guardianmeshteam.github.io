@@ -7,7 +7,7 @@
 <meta name="description" content="Casos de uso, historias de usuario implementadas, alcance del MVP y hoja de ruta de la Fase 2 de GuardianMesh.">
 <meta name="theme-color" content="#071D49">
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/styles.css?v=4">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -44,12 +44,16 @@
     <p><strong>Prototipo visual completo.</strong> Abre el flujo de pantallas diseñado para el proyecto (editable: cambia el <code>href</code> si el enlace cambia).</p>
     <a class="btn btn-primary" href="https://claude.ai/artifact/NbCCoDzDb7epjdtKpbuLse#page-da5bc254d2bf" target="_blank" rel="noopener">Abrir prototipo UX/UI ↗</a>
   </div>
-  <figure class="image-slot">
-    <img src="assets/img/flujo-ux-figma.png" alt="Flujo de pantallas UX/UI (Figma)" hidden>
-    <div class="slot-empty"><strong>Flujo de pantallas UX/UI (Figma)</strong>Guarda la imagen exportada como <code>assets/img/flujo-ux-figma.png</code></div>
-    <figcaption>Flujo de diseño UX/UI</figcaption>
-  </figure>
-  <p class="callout"><strong>Nota:</strong> esta imagen y el prototipo corresponden al <em>flujo de diseño UX/UI</em>, distinto de las capturas de la build compilada de Android.</p>
+  <div class="ux-gallery">
+    <figure class="ux-shot"><a href="assets/img/ux/inicio.webp" target="_blank" rel="noopener" aria-label="Ampliar: Vista principal simplificada"><img src="assets/img/ux/inicio.webp" alt="Inicio de Carmen: protección activada y botón grande para llamar a Andrea" width="540" height="1169" loading="lazy" decoding="async"></a><figcaption><b>Vista principal simplificada</b>Adulto Mayor</figcaption></figure>
+    <figure class="ux-shot"><a href="assets/img/ux/contactos.webp" target="_blank" rel="noopener" aria-label="Ampliar: Red familiar verificada e invitación"><img src="assets/img/ux/contactos.webp" alt="Contactos con la ventana para invitar a alguien por correo" width="540" height="1169" loading="lazy" decoding="async"></a><figcaption><b>Red familiar verificada e invitación</b>Contactos</figcaption></figure>
+    <figure class="ux-shot g"><a href="assets/img/ux/semaforo-verde.webp" target="_blank" rel="noopener" aria-label="Ampliar: Semáforo Verde"><img src="assets/img/ux/semaforo-verde.webp" alt="Llamada en verde: Todo está bien, seguimos analizando la llamada" width="540" height="1169" loading="lazy" decoding="async"></a><figcaption><b>Semáforo Verde</b>Monitoreo silencioso</figcaption></figure>
+    <figure class="ux-shot a"><a href="assets/img/ux/semaforo-ambar.webp" target="_blank" rel="noopener" aria-label="Ampliar: Semáforo Ámbar"><img src="assets/img/ux/semaforo-ambar.webp" alt="Llamada en ámbar: Ten cuidado, con la pregunta de seguridad" width="540" height="1169" loading="lazy" decoding="async"></a><figcaption><b>Semáforo Ámbar</b>Alerta y pregunta secreta</figcaption></figure>
+    <figure class="ux-shot r"><a href="assets/img/ux/semaforo-rojo.webp" target="_blank" rel="noopener" aria-label="Ampliar: Semáforo Rojo"><img src="assets/img/ux/semaforo-rojo.webp" alt="Llamada en rojo: Riesgo alto, con botones para avisar o colgar y llamar a Andrea" width="540" height="1169" loading="lazy" decoding="async"></a><figcaption><b>Semáforo Rojo</b>Bloqueo y auxilio inmediato</figcaption></figure>
+    <figure class="ux-shot"><a href="assets/img/ux/avisos.webp" target="_blank" rel="noopener" aria-label="Ampliar: Notificación al Familiar Protector"><img src="assets/img/ux/avisos.webp" alt="Avisos de Andrea: Carmen te pidió ayuda" width="540" height="1169" loading="lazy" decoding="async"></a><figcaption><b>Notificación al Familiar Protector</b>Avisos (vista de Andrea)</figcaption></figure>
+  </div>
+  <p class="callout"><strong>Nota:</strong> estas pantallas y el prototipo corresponden al <em>flujo de diseño UX/UI</em>, distinto de las capturas de la build compilada de Android.</p>
+  <p class="ux-cta"><a class="btn btn-primary" href="architecture.html#simulacion-3d">▶ Ver simulación 3D con la app real</a></p>
 
   <h2 id="casos">Casos de uso principales</h2>
   <div class="grid">
@@ -100,6 +104,6 @@
   </div>
 </div></main>
 <footer class="foot">GuardianMesh · SWNT 2026-2 · Documentación generada desde la rama <code>development</code>.</footer>
-<script src="assets/app.js"></script>
+<script src="assets/app.js?v=4"></script>
 </body>
 </html>

@@ -84,6 +84,16 @@
     if (img.complete && img.naturalWidth) ok();
   });
 
+  // Los diagramas y las escenas crecen al cargar: se reajusta el ancla hasta que la persona interactúe
+  var target = location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if (target && 'ResizeObserver' in window) {
+    var ro = new ResizeObserver(function () { target.scrollIntoView({ behavior: 'instant', block: 'start' }); });
+    var stop = function () { ro.disconnect(); };
+    ro.observe(document.body);
+    ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function (ev) { addEventListener(ev, stop, { once: true, passive: true }); });
+    setTimeout(stop, 6000);
+  }
+
   // Mermaid v11 (si no hay red, se queda el código fuente del diagrama)
   var diagrams = document.querySelectorAll('pre.mermaid');
   if (diagrams.length) {
@@ -98,7 +108,12 @@
           lineColor: '#475569', fontFamily: 'Inter, system-ui, sans-serif'
         }
       });
-      return mermaid.run({ nodes: diagrams });
+      // Uno por uno: si un diagrama falla, los demás no muestran un aviso falso
+      return [].slice.call(diagrams).reduce(function (chain, d) {
+        return chain.then(function () { return mermaid.run({ nodes: [d] }); }).catch(function (err) {
+          console.error(err); d.insertAdjacentHTML('afterend', '<p class="callout warn">No se pudo dibujar este diagrama.</p>');
+        });
+      }, Promise.resolve());
     }).catch(function () {
       diagrams.forEach(function (d) {
         d.insertAdjacentHTML('afterend', '<p class="callout warn">No se pudo cargar Mermaid (¿sin conexión?). Arriba se muestra el código fuente del diagrama.</p>');

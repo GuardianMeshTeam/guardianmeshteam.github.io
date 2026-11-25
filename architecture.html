@@ -7,7 +7,7 @@
 <meta name="description" content="Arquitectura hexagonal, despliegue serverless en AWS, diagramas, endpoints y eventos de GuardianMesh.">
 <meta name="theme-color" content="#071D49">
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css">
+<link rel="stylesheet" href="assets/styles.css?v=4">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
 <body>
@@ -124,11 +124,8 @@ sequenceDiagram
   <p>Las transiciones de la llamada son condicionales en DynamoDB: gana el primer escritor. Las reglas duras (<code>desafio_fallido</code>, <code>dinero_mas_urgencia</code>, <code>clonacion_vocal</code>, <code>suplantacion_biometrica</code>) fuerzan RED con score 100.</p>
 
   <h2 id="datos">Modelo de datos DynamoDB</h2>
-  <figure class="image-slot">
-    <img src="assets/img/modelo-datos.png" alt="Modelo de datos en DynamoDB" hidden>
-    <div class="slot-empty"><strong>Modelo de Datos en DynamoDB</strong>Guarda la imagen exportada como <code>assets/img/modelo-datos.png</code></div>
-    <figcaption>Modelo de datos en DynamoDB</figcaption>
-  </figure>
+  <p>Toca una tabla para abrirla: verás su clave, índices, TTL y relaciones.</p>
+  <div class="scene3d" data-scene="datos"></div>
   <div class="table-wrap"><table>
     <thead><tr><th>Tabla</th><th>Clave</th><th>Índices</th><th>Contenido</th></tr></thead>
     <tbody>
@@ -141,16 +138,18 @@ sequenceDiagram
     </tbody>
   </table></div>
   <p>Además existen <code>profiles</code> y <code>challenges</code> (módulo <code>data</code>) y las tablas de conexiones de avisos y de monitoreo. Las <strong>transcripciones y el audio no se guardan</strong>.</p>
-  <figure class="image-slot">
-    <img src="assets/img/diagrama-casos-uso.png" alt="Diagrama de casos de uso (imagen propia)" hidden>
-    <div class="slot-empty"><strong>Casos de Uso del Sistema</strong>Guarda la imagen exportada como <code>assets/img/diagrama-casos-uso.png</code>.</div>
-    <figcaption>Diagrama de casos de uso</figcaption>
-  </figure>
-  
-  <h2 id="simulacion-3d">Simulación 3D End-to-End: Detección y Alerta en Tiempo Real</h2>
+
+  <h2 id="casos-uso">Casos de uso del sistema</h2>
+  <p>Elige un actor para iluminar lo que puede hacer dentro de GuardianMesh.</p>
+  <div class="scene3d" data-scene="casos"></div>
+  <details class="s3-table"><summary>Ver tabla de casos de uso</summary><div class="table-wrap"><table><thead><tr><th>Actor</th><th>Casos de uso</th></tr></thead><tbody><tr><td>Persona mayor</td><td>Iniciar sesión · Gestionar contactos · Crear desafío y huella de voz · Consultar historial · Contestar llamada · Ver semáforo de riesgo · Verificar con pregunta familiar · Avisar a la Red de Confianza · Llamar a un contacto</td></tr><tr><td>Llamante</td><td>Iniciar sesión · Llamar a un contacto</td></tr><tr><td>IA · Bedrock</td><td>Evaluar riesgo · Transcribir audio</td></tr><tr><td>Contacto de confianza</td><td>Iniciar sesión · Gestionar contactos · Consultar historial · Recibir avisos</td></tr></tbody></table></div></details>
+
+  <section id="simulacion-3d" aria-labelledby="simulacion-3d-titulo">
+  <h2 id="simulacion-3d-titulo">Simulación 3D End-to-End: Detección y Alerta en Tiempo Real</h2>
   <p>Tres escenarios conectados por GuardianMesh AI, con grabaciones reales de la app. Elige un paso o arrastra para girar la maqueta.</p>
   <div class="demo3d" id="demo3d"><noscript>Activa JavaScript para ver la simulación.</noscript></div>
   <p class="s3-note">Los dioramas son una metáfora. Las llamadas ocurren entre usuarios de la app y el aviso llega al panel «Avisos» de la persona de confianza.</p>
+  </section>
 
   <h2 id="endpoints">Endpoints HTTP</h2>
   <p>Todas las rutas <code>/api/v1/*</code> exigen <code>Authorization: Bearer</code> con <code>aal2</code>, salvo las públicas.</p>
@@ -187,9 +186,10 @@ sequenceDiagram
   </table></div>
 </div></main>
 <footer class="foot">GuardianMesh · SWNT 2026-2 · Documentación generada desde la rama <code>development</code>.</footer>
-<script src="assets/app.js"></script>
-<script src="assets/c4-viewer.js"></script>
-<script type="module" src="assets/scene3d.js"></script>
-<script type="module" src="assets/demo-3d.js"></script>
+<script src="assets/app.js?v=4"></script>
+<script src="assets/diagrams/c4-svg.js?v=4"></script>
+<script src="assets/c4-viewer.js?v=4"></script>
+<script src="assets/scene3d.js?v=4"></script>
+<script type="module" src="assets/demo-3d.js?v=4"></script>
 </body>
 </html>

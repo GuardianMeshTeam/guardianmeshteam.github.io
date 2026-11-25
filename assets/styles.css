@@ -116,7 +116,7 @@ figure.image-slot figcaption{font-size:.85rem;color:var(--text-2)}
 .member h3{margin:0;font-size:1rem;line-height:1.3}
 .avatar{position:relative;flex:none;width:84px;height:84px;border-radius:50%;overflow:hidden;border:3px solid var(--brand-blue);background-clip:padding-box;display:grid;place-items:center;color:#fff;font-weight:800;font-size:1.4rem;letter-spacing:.02em;box-shadow:0 2px 8px rgba(7,29,73,.2)}
 .avatar-navy{background:var(--brand-navy);border-color:var(--brand-navy)}.avatar-blue{background:var(--brand-blue);border-color:var(--brand-blue)}.avatar-emerald{background:var(--brand-emerald-dark);border-color:var(--brand-emerald)}
-.avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 8%;border-radius:50%}
 .avatar img[hidden]{display:none}
 
 /* Flujo UX */
@@ -182,3 +182,26 @@ figure.image-slot figcaption{font-size:.85rem;color:var(--text-2)}
 .d3-steps .on b,.d3-steps .on small{color:#fff}
 .d3-fallback{display:flex;flex-wrap:wrap;gap:12px;padding:16px;justify-content:center}.d3-fallback p{width:100%;margin:0}.d3-fallback video,.d3-fallback img{height:380px;border-radius:16px}
 @media (max-width:720px){.d3-stage{aspect-ratio:1/1.02}.d3-label{font-size:.56rem;line-height:1.25;padding:2px 5px}.d3-label:not(.ai){white-space:normal;max-width:88px;text-align:center}.d3-label i{display:none}.d3-tools{right:8px;top:8px;gap:4px}.d3-tools span{display:none}.d3-tools button{min-height:44px;min-width:44px;font-size:1rem}.d3-hint{display:none}.d3-steps{grid-template-columns:1fr 1fr}.d3-caption{min-height:7.6em;font-size:.92rem}}
+
+/* Recorridos 3D */
+.s3-btn[aria-pressed=true]:not(.play){background:var(--brand-navy);border-color:var(--brand-navy);color:#fff}.s3-btn[aria-pressed=true]:not(.play) small{color:#C9D6EA}
+.s3-info{padding:14px 18px;border-top:1px solid var(--border);font-size:.9rem}.s3-info:empty{display:none}.s3-info p{margin:0}.s3-info ul+p{margin-top:8px;color:var(--text-2)}
+.s3-info dl{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 20px;margin:0}.s3-info .w{grid-column:span 2}
+.s3-info dt{font-size:.74rem;color:var(--text-3);font-weight:600}.s3-info dd{margin:0;color:var(--text);overflow-wrap:anywhere}
+.s3-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}.s3-chips li{background:var(--ice);border:1px solid var(--primary-light);border-radius:999px;padding:3px 12px;font-size:.84rem}
+.s3-info .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#F59E0B}
+.s3-label.uc{white-space:normal;width:112px;text-align:center;background:none;box-shadow:none;line-height:1.2;transition:opacity .25s}.s3-label.uc.off{opacity:.42}
+@media (max-width:720px){.s3-info dl{grid-template-columns:1fr 1fr}.s3-label.uc{width:auto;font-size:.72rem}.s3-label.nw{white-space:normal;max-width:50px;overflow-wrap:anywhere;text-align:center;line-height:1.1;font-size:.5rem;padding:2px 3px}}
+
+/* Galería UX/UI */
+.ux-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:24px 20px;margin:24px 0}
+.ux-shot{margin:0;display:flex;flex-direction:column;gap:12px}
+.ux-shot a{display:block;border:6px solid var(--brand-navy);border-radius:28px;overflow:hidden;background:var(--ice);box-shadow:0 10px 28px rgba(7,29,73,.16);transition:transform .2s,box-shadow .2s}
+.ux-shot a:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(7,29,73,.22)}
+.ux-shot img{display:block;width:100%;height:auto}
+.ux-shot figcaption{font-size:.88rem;line-height:1.4;color:var(--text-2);padding-left:12px;border-left:4px solid var(--brand-blue)}
+.ux-shot figcaption b{display:block;color:var(--text)}
+.ux-shot.g figcaption{border-color:var(--success)}.ux-shot.a figcaption{border-color:var(--warning)}.ux-shot.r figcaption{border-color:var(--danger)}
+.ux-cta{text-align:center;margin:24px 0}
+@media (max-width:900px){.ux-gallery{grid-template-columns:repeat(2,1fr);gap:20px 14px}.ux-shot a{border-width:4px;border-radius:20px}}
+@media (max-width:380px){.ux-gallery{grid-template-columns:1fr}}
