@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#071D49">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css?v=7">
+<link rel="stylesheet" href="assets/styles.css?v=8">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -90,9 +90,11 @@ FORMATO DE RESPUESTA: responde ÚNICAMENTE con un objeto JSON válido, sin texto
   <h3>Ingeniería de prompts</h3>
   <div class="card doc-card" id="prompts-doc">
     <div><h4>Prompts de construcción del proyecto</h4>
-    <p>Los prompts estructurados (RTF: rol, tarea y formato, con razonamiento paso a paso) que guiaron el diseño de la arquitectura y el modelado de amenazas STRIDE se reúnen en un anexo.</p></div>
-    <!-- Reemplazar href por la URL del anexo externo -->
-    <a class="btn btn-primary" id="prompts-link" href="#prompts-doc">Abrir documento completo de prompts de construcción ↗</a>
+    <p>Reúne los prompts estructurados (Rol, Contexto, Tarea y Restricciones) utilizados para diseñar, desarrollar y documentar la aplicación GuardianMesh.</p></div>
+    <div class="doc-actions">
+      <a class="btn btn-doc" href="Bitacora_Prompts_GuardianMesh.pdf" target="_blank" rel="noopener">Ver PDF ↗</a>
+      <a class="btn btn-ghost" href="Bitacora_Prompts_GuardianMesh.pdf" download="Bitacora_Prompts_GuardianMesh.pdf">Descargar PDF ↓</a>
+    </div>
   </div>
 
   <h2 id="latencia">Presupuesto de latencia, suelo de reglas y fallback</h2>
@@ -131,7 +133,7 @@ FORMATO DE RESPUESTA: responde ÚNICAMENTE con un objeto JSON válido, sin texto
   <nav class="pager" aria-label="Páginas"><a class="pager-prev" href="architecture.html" rel="prev"><small><i aria-hidden="true">←</i> Anterior</small><span>Arquitectura</span></a><a class="pager-next" href="security.html" rel="next"><small>Siguiente <i aria-hidden="true">→</i></small><span>Seguridad y calidad</span></a></nav>
 </div></main>
 <footer class="foot">GuardianMesh · Proyecto SWNT 2026-2 · Escuela Colombiana de Ingeniería Julio Garavito</footer>
-<script src="assets/app.js?v=7"></script>
-<script src="assets/scene3d.js?v=7"></script>
+<script src="assets/app.js?v=8"></script>
+<script src="assets/scene3d.js?v=8"></script>
 </body>
 </html>

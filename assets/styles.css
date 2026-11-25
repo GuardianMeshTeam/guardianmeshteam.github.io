@@ -268,3 +268,13 @@ tbody tr:hover td{background:var(--ice)}
 .pager-next{margin-left:auto;text-align:right}
 @media (max-width:639px){.pager{flex-direction:column;gap:.625rem}.pager a{max-width:none;margin:0}}
 @media (max-width:360px){.topbar{gap:.5rem}.topbar>.brand{gap:.5rem;font-size:.95rem}.topbar-actions{gap:.35rem}.menu-btn{padding:.5rem .6rem}}
+
+/* Acciones del hero y de la bitácora de prompts */
+.hero-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.25rem}
+.hero-actions .btn{margin:0}
+.doc-actions{display:flex;flex-wrap:wrap;gap:.6rem}
+.doc-card>.doc-actions{flex:0 0 auto}
+.doc-actions .btn{margin:0;white-space:nowrap}
+.btn-doc{background:#0B4394;border-color:#0B4394;color:#fff}.btn-doc:hover{background:#083577;border-color:#083577;color:#fff}
+[data-theme="dark"] .btn-doc{border-color:var(--primary)}
+@media (max-width:639px){.hero-actions,.doc-actions{flex-direction:column}.doc-actions{width:100%}.doc-card>div,.doc-card>.doc-actions{flex:none}.doc-card{flex-direction:column;align-items:stretch}}
