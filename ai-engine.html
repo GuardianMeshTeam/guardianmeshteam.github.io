@@ -6,14 +6,16 @@
 <title>GuardianMesh · Motor de IA</title>
 <meta name="description" content="Integración con Amazon Bedrock, prompts, umbrales, fallback regex y heurística acústica de GuardianMesh.">
 <meta name="theme-color" content="#071D49">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css?v=5">
+<link rel="stylesheet" href="assets/styles.css?v=7">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
 <header class="topbar">
   <a class="brand" href="index.html"><span class="logo-wrap"><img src="assets/logo-guardianmesh.png" alt="" width="36" height="36"></span>GuardianMesh</a>
-  <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="sidebar">☰ Menú</button>
+  <p class="crumbs"><a href="index.html">GuardianMesh</a><i aria-hidden="true">/</i><b aria-current="page">Motor de IA</b></p>
+  <div class="topbar-actions"><button class="theme-btn" id="theme-btn" type="button" aria-label="Cambiar tema claro u oscuro" aria-pressed="false"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"/></svg><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M5.3 18.7l1.5-1.5M17.2 6.8l1.5-1.5"/></svg></button><button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="sidebar">☰ Menú</button></div>
 </header>
 <div class="scrim" id="scrim"></div>
 <aside class="sidebar" id="sidebar" aria-label="Navegación">
@@ -126,10 +128,10 @@ FORMATO DE RESPUESTA: responde ÚNICAMENTE con un objeto JSON válido, sin texto
     <li><strong>Histéresis:</strong> tras un RED no se vuelve a GREEN antes de 15 s (queda AMBER). Un desafío familiar acertado levanta la alerta de inmediato.</li>
     <li><strong>Degradación:</strong> si el orquestador falla internamente, el resultado no baja de AMBER.</li>
   </ul>
-  <nav class="pager" aria-label="Páginas"><a class="pager-prev" href="architecture.html" rel="prev"><small>← Anterior</small>Arquitectura</a><a class="pager-next" href="security.html" rel="next"><small>Siguiente →</small>Seguridad y calidad</a></nav>
+  <nav class="pager" aria-label="Páginas"><a class="pager-prev" href="architecture.html" rel="prev"><small><i aria-hidden="true">←</i> Anterior</small><span>Arquitectura</span></a><a class="pager-next" href="security.html" rel="next"><small>Siguiente <i aria-hidden="true">→</i></small><span>Seguridad y calidad</span></a></nav>
 </div></main>
 <footer class="foot">GuardianMesh · Proyecto SWNT 2026-2 · Escuela Colombiana de Ingeniería Julio Garavito</footer>
-<script src="assets/app.js?v=5"></script>
-<script src="assets/scene3d.js?v=5"></script>
+<script src="assets/app.js?v=7"></script>
+<script src="assets/scene3d.js?v=7"></script>
 </body>
 </html>

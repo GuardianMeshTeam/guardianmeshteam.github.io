@@ -6,14 +6,16 @@
 <title>GuardianMesh · Visión general</title>
 <meta name="description" content="GuardianMesh protege a adultos mayores en Colombia contra el vishing y la suplantación en llamadas.">
 <meta name="theme-color" content="#071D49">
+<script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css?v=5">
+<link rel="stylesheet" href="assets/styles.css?v=7">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
 <header class="topbar">
   <a class="brand" href="index.html"><span class="logo-wrap"><img src="assets/logo-guardianmesh.png" alt="" width="36" height="36"></span>GuardianMesh</a>
-  <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="sidebar">☰ Menú</button>
+  <p class="crumbs"><b aria-current="page">Visión general</b></p>
+  <div class="topbar-actions"><button class="theme-btn" id="theme-btn" type="button" aria-label="Cambiar tema claro u oscuro" aria-pressed="false"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.8 6.8 0 0 0 10.7 10.7z"/></svg><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M5.3 18.7l1.5-1.5M17.2 6.8l1.5-1.5"/></svg></button><button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="sidebar">☰ Menú</button></div>
 </header>
 <div class="scrim" id="scrim"></div>
 <aside class="sidebar" id="sidebar" aria-label="Navegación">
@@ -70,19 +72,19 @@
   <h2 id="repos">Los 4 repositorios</h2>
   <p>Cada tarjeta enlaza a la rama <code>development</code>.</p>
   <div class="grid">
-    <div class="card"><h3>GuardianMesh-api</h3><span class="hash">94ae66f</span>
+    <div class="card"><h3>GuardianMesh-api</h3>
       <p>API &amp; Auth Gateway y motor de riesgo.</p>
       <div><span class="badge">Python 3.12</span><span class="badge">FastAPI (local)</span><span class="badge">AWS Lambda</span><span class="badge">Bedrock</span><span class="badge">PyJWT</span></div>
       <p><a href="https://github.com/GuardianMeshTeam/GuardianMesh-api/tree/development" rel="noopener">Rama development ↗</a></p></div>
-    <div class="card"><h3>GuardianMesh-communications</h3><span class="hash">ef4ee97</span>
+    <div class="card"><h3>GuardianMesh-communications</h3>
       <p>Señalización WebRTC 1:1 por WebSocket.</p>
       <div><span class="badge">Python 3.12</span><span class="badge">API GW WebSocket</span><span class="badge">DynamoDB</span><span class="badge">EventBridge Scheduler</span></div>
       <p><a href="https://github.com/GuardianMeshTeam/GuardianMesh-communications/tree/development" rel="noopener">Rama development ↗</a></p></div>
-    <div class="card"><h3>GuardianMesh-front</h3><span class="hash">0f5663a</span>
+    <div class="card"><h3>GuardianMesh-front</h3>
       <p>PWA y app Android.</p>
       <div><span class="badge">React 19.3</span><span class="badge">TypeScript 5.6</span><span class="badge">Vite 6.4</span><span class="badge">Capacitor 8.5</span><span class="badge">Vitest 2.1</span></div>
       <p><a href="https://github.com/GuardianMeshTeam/GuardianMesh-front/tree/development" rel="noopener">Rama development ↗</a></p></div>
-    <div class="card"><h3>GuardianMesh-infra</h3><span class="hash">86c501c</span>
+    <div class="card"><h3>GuardianMesh-infra</h3>
       <p>Infraestructura AWS como código y pipeline.</p>
       <div><span class="badge">Terraform ≥ 1.10</span><span class="badge">AWS provider 5.x</span><span class="badge">GitHub Actions + OIDC</span><span class="badge">ruff 0.17</span></div>
       <p><a href="https://github.com/GuardianMeshTeam/GuardianMesh-infra/tree/development" rel="noopener">Rama development ↗</a></p></div>
@@ -102,10 +104,10 @@
     <div class="card member"><span class="avatar avatar-blue" role="img" aria-label="Foto o iniciales"><span class="initials">FC</span><img src="assets/img/team/felipe.jpeg" alt="" loading="lazy" width="84" height="84" onerror="this.hidden=true;this.removeAttribute('src')"></span><h3>Felipe Calvache</h3></div>
     <div class="card member"><span class="avatar avatar-emerald" role="img" aria-label="Foto o iniciales"><span class="initials">DS</span><img src="assets/img/team/david.jpeg" alt="" loading="lazy" width="84" height="84" onerror="this.hidden=true;this.removeAttribute('src')"></span><h3>David Salamanca</h3></div>
   </div>
-  <nav class="pager" aria-label="Páginas"><a class="pager-next" href="architecture.html" rel="next"><small>Siguiente →</small>Arquitectura</a></nav>
+  <nav class="pager" aria-label="Páginas"><a class="pager-next" href="architecture.html" rel="next"><small>Siguiente <i aria-hidden="true">→</i></small><span>Arquitectura</span></a></nav>
 </div></main>
 <footer class="foot">GuardianMesh · Proyecto SWNT 2026-2 · Escuela Colombiana de Ingeniería Julio Garavito</footer>
-<script src="assets/app.js?v=5"></script>
-<script src="assets/scene3d.js?v=5"></script>
+<script src="assets/app.js?v=7"></script>
+<script src="assets/scene3d.js?v=7"></script>
 </body>
 </html>
