@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#071D49">
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
 <link rel="stylesheet" href="assets/styles.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -145,11 +146,11 @@ sequenceDiagram
     <div class="slot-empty"><strong>Casos de Uso del Sistema</strong>Guarda la imagen exportada como <code>assets/img/diagrama-casos-uso.png</code>.</div>
     <figcaption>Diagrama de casos de uso</figcaption>
   </figure>
-  <figure class="image-slot">
-    <img src="assets/img/mockup-app.png" alt="Mockup de la app (imagen propia)" hidden>
-    <div class="slot-empty"><strong>Mockup / capturas de la app</strong>Guarda la imagen como <code>assets/img/mockup-app.png</code>.</div>
-    <figcaption>Pantallas de la app Android</figcaption>
-  </figure>
+  
+  <h2 id="simulacion-3d">Simulación 3D End-to-End: Detección y Alerta en Tiempo Real</h2>
+  <p>Tres escenarios conectados por GuardianMesh AI, con grabaciones reales de la app. Elige un paso o arrastra para girar la maqueta.</p>
+  <div class="demo3d" id="demo3d"><noscript>Activa JavaScript para ver la simulación.</noscript></div>
+  <p class="s3-note">Los dioramas son una metáfora. Las llamadas ocurren entre usuarios de la app y el aviso llega al panel «Avisos» de la persona de confianza.</p>
 
   <h2 id="endpoints">Endpoints HTTP</h2>
   <p>Todas las rutas <code>/api/v1/*</code> exigen <code>Authorization: Bearer</code> con <code>aal2</code>, salvo las públicas.</p>
@@ -189,5 +190,6 @@ sequenceDiagram
 <script src="assets/app.js"></script>
 <script src="assets/c4-viewer.js"></script>
 <script type="module" src="assets/scene3d.js"></script>
+<script type="module" src="assets/demo-3d.js"></script>
 </body>
 </html>
