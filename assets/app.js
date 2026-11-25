@@ -84,8 +84,8 @@
         securityLevel: 'strict',
         theme: 'base',
         themeVariables: {
-          primaryColor: '#D5EDFF', primaryBorderColor: '#1769A6', primaryTextColor: '#163B59',
-          lineColor: '#52697B', fontFamily: 'Inter, system-ui, sans-serif'
+          primaryColor: '#D6E4F7', primaryBorderColor: '#0A4DA2', primaryTextColor: '#0F172A',
+          lineColor: '#475569', fontFamily: 'Inter, system-ui, sans-serif'
         }
       });
       return mermaid.run({ nodes: diagrams });
