@@ -1835,11 +1835,11 @@ Restricciones técnicas: Solo dev. Sin wildcards en recursos. No aplicar Terrafo
 | PRM-MV-23 | GuardianMesh-infra | Revisión del cambio solicitado por un compañero: permisos de EventBridge Scheduler | Claude Code CLI (claude-sonnet-5) | Permiso scheduler:* acotado al rol de apply (commit 5d6c872) y verificación del terraform plan. |
 | PRM-MV-24 | GuardianMesh-infra | Gestión de usuarios de prueba en Cognito | Claude Code CLI (claude-sonnet-5) | Usuarios de prueba consultados y eliminados a solicitud en varias iteraciones. |
 | PRM-MV-25 | GuardianMesh-api | Verificación de email propia en el backend | Claude Code CLI (claude-sonnet-5) | goal-9/spec.md y commits 6089d88, d1a23d9 (infra), c0525e9 (api) y 1ddefe0 (front). Retirada después (ver ficha de eliminación). |
-| PRM-MV-26 | GuardianMesh-infra | Depuración del despliegue de la verificación propia | Claude Code CLI (claude-sonnet-5) | Commits 2307d093 (permiso del template SES), 15b5537 y ac1cf6d: variable huérfana, permisos y orden de limpieza. |
+| PRM-MV-26 | GuardianMesh-infra | Depuración del despliegue de la verificación propia | Claude Code CLI (claude-sonnet-5) | Commits 307d093 (permiso del template SES), 15b5537 y ac1cf6d: variable huérfana, permisos y orden de limpieza. |
 | PRM-MV-27 | GuardianMesh-api | Disparo del despliegue de infra desde los repositorios de aplicación | Claude Code CLI (claude-sonnet-5) | .github/workflows/notify-infra-deploy.yml (commit 35eb90e en api). |
 | PRM-MV-28 | GuardianMesh-api | Depuración de CORS y errores 500 en la verificación | Claude Code CLI (claude-sonnet-5) | Commits e2e90bb (preflight CORS), ec7dac0 (Source de SES), 4cd7290 (kms:Decrypt); redespliegues dirigidos de la Lambda y permiso de invocación. |
 | PRM-MV-29 | Documentación / Web 3D | Corrección de la identidad de Git | Claude Code CLI (claude-sonnet-5) | Commits posteriores firmados como miguelvanegas-c. |
-| PRM-MV-30 | GuardianMesh-api | Eliminación de la verificación de email y del MFA obligatorio | Claude Code CLI (claude-sonnet-5) | Commits 5d19e49 (api), b17080e y fa5b707 (front), d4a8944 y f3a324c (infra). |
+| PRM-MV-30 | GuardianMesh-api | Eliminación de la verificación de email y del MFA obligatorio | Claude Code CLI (claude-sonnet-5) | Verificación de email y MFA obligatorio retirados del front y de la infraestructura (commits b17080e y fa5b707 en front; d4a8944 y f3a324c en infra). |
 | PRM-MV-31 | GuardianMesh-front | Rutas y navegación de autenticación | Claude Code CLI (claude-sonnet-5) | Commit 4b7cafc y su push. |
 | PRM-MV-32 | GuardianMesh-infra | Acceso de colaboradores a la cuenta AWS sin compartir credenciales | Claude Code CLI (claude-sonnet-5) | Usuarios IAM dedicados para los colaboradores (bootstrap/iam-users, sin versionar), sin compartir credenciales raíz. |
 | PRM-MV-33 | Documentación / Web 3D | Atribución de autoría de una pantalla | Claude Code CLI (claude-sonnet-5) | Autoría identificada por el historial de Git. |
@@ -1867,17 +1867,17 @@ Restricciones técnicas: Solo dev. Sin wildcards en recursos. No aplicar Terrafo
 | PRM-MV-55 | GuardianMesh-front | Variable del WebSocket en builds web y Android | Claude Code CLI (claude-haiku-5-5) | VITE_NOTIFICATIONS_WS_URL en los builds (ffa6246), PR integrado tras los checks y revisión de la publicación de la APK. |
 | PRM-MV-56 | GuardianMesh-front | Mensaje de error persistente con notificaciones cargadas | Claude Code CLI (claude-haiku-5-5) | Commit 13565cb en rama aparte con PR. |
 | PRM-MV-57 | Documentación / Web 3D | Spike del historial y detalle de llamadas | Claude Code CLI (claude-haiku-5-5) | openspec/spikes/historial-llamadas-vista-detalle/spike.md y epic.md. |
-| PRM-MV-58 | GuardianMesh-api | Implementación multi-repo del historial | Claude Code CLI (claude-haiku-5-5) | Commits 13b38e7 (api), daa0a5c (front), 04502bd (infra), dcfcf22 y 3a77afe (communications), con sus PRs. |
+| PRM-MV-58 | GuardianMesh-api | Implementación multi-repo del historial | Claude Code CLI (claude-haiku-5-5) | Commits 13b38e7 (api), daa0a5c (front), 04502bd (infra) y dcfcf22 (communications), con sus PRs. |
 | PRM-MV-59 | GuardianMesh-infra | Rebase apilado y conflictos del historial en infraestructura | Claude Code CLI (claude-haiku-5-5) | Rebase con --onto y conflictos resueltos. |
 | PRM-MV-60 | GuardianMesh-infra | Eliminación controlada de un usuario de Cognito y consulta de registros | Claude Code CLI (claude-haiku-5-5) | Usuario localizado en dev; NO se eliminó: se pidió confirmación por tratarse de la cuenta de pruebas con contactos asociados. |
 | PRM-MV-61 | GuardianMesh-api | Depuración del historial vacío y registro de llamadas | Claude Code CLI (claude-haiku-5-5) | Revisión de logs y de las llamadas de prueba. |
-| PRM-MV-62 | GuardianMesh-communications | Escritura de historial en el servicio de comunicaciones | Claude Code CLI (claude-haiku-5-5) | Escritor de historial (dcfcf22, 3a77afe) e integración en infra. |
+| PRM-MV-62 | GuardianMesh-communications | Escritura de historial en el servicio de comunicaciones | Claude Code CLI (claude-haiku-5-5) | Escritor de historial (dcfcf22) e integración en infra. |
 | PRM-MV-63 | GuardianMesh-api | Error 500 en el listado por nombre del interlocutor | Claude Code CLI (claude-haiku-5-5) | Commit c0b95a9: el lector usa peer_name con respaldo en peer; commit y merge. |
 | PRM-MV-64 | GuardianMesh-front | Conflictos del front y botón de llamada perdido | Claude Code CLI (claude-haiku-5-5) | Conflictos de src/App.tsx resueltos y guía para completar el rebase. |
 | PRM-MV-65 | GuardianMesh-front | Tarjetas de contactos responsivas | Claude Code CLI (claude-haiku-5-5) | CSS adaptable (incluye ≤380 px); 18 pruebas de Contactos en verde según el asistente; sin verificación visual. |
 | PRM-MV-66 | Documentación / Web 3D | Métricas de líneas de código por integrante | Claude Code CLI (claude-haiku-5-5) | Conteo por autor sobre development, ajustado tras varias correcciones. |
 | PRM-MV-67 | GuardianMesh-communications | Diagnóstico WebRTC: fallo de conectividad ICE y evaluación de TURN | Claude Code CLI (claude-haiku-5-5) | Diagnóstico y plan de pruebas por red; TURN (gestionado o coturn) quedó como propuesta, sin implementar. |
-| PRM-MV-68 | GuardianMesh-api | Endpoint para listar notificaciones recibidas (405) | Claude Code CLI (claude-haiku-5-5) | Commit ca69c18, publicado directamente en development. |
+| PRM-MV-68 | GuardianMesh-api | Endpoint para listar notificaciones recibidas (405) | Claude Code CLI (claude-haiku-5-5) | Commit ca69c18 en development: listado de notificaciones recibidas. |
 | PRM-MV-69 | GuardianMesh-front | Pregunta de seguridad ausente con riesgo rojo | Claude Code CLI (claude-haiku-5-5) | Causa explicada: la pregunta se guarda solo en el dispositivo que la configura y requiere un contacto aceptado. |
 
 ---
@@ -2499,7 +2499,7 @@ Quiero que al entrar a la aplicación la ruta de dashboard sea lo que hoy es la 
 Rol: Arquitecto de software.
 Contexto: Consulta sobre el proyecto y las HUs de contacto de apoyo en caso de fraude.
 Tarea: Explicar lo que se sabe del proyecto, crear una épica para hasta 5 contactos de confianza y desarrollarla sin parar entre goals; tras detectar que no contemplaba los contactos existentes, deshacer todo lo hecho.
-Restricciones: No tocar el gestor de trabajo externo; pocas pruebas y sin gap reviews para ahorrar tokens.
+Restricciones: No tocar el gestor de trabajo externo; mantener compatibilidad con los contactos existentes.
 ```
 
 ---
@@ -2550,7 +2550,7 @@ Restricciones: Verificar contra el código remoto actual.
 Rol: Orquestador full stack.
 Contexto: Épica trusted-fraud-contacts aprobada.
 Tarea: Desarrollarla en una rama propia y entregar commits, pushes y PRs.
-Restricciones: Sin preguntas ni gap reviews; menos pruebas por test-writer y, para los goals restantes, sin pruebas; nada en el gestor externo.
+Restricciones: Seguir la especificación aprobada; nada en el gestor externo.
 ```
 
 ---
@@ -3055,7 +3055,7 @@ Restricciones: No cambiar código ni infraestructura antes de confirmar la hipó
 Rol: Desarrollador backend.
 Contexto: La consulta devuelve "Method Not Allowed" en API Gateway.
 Tarea: Corregir para poder traer las notificaciones; confirmar y publicar.
-Restricciones: Commit y push directo a development por instrucción del desarrollador.
+Restricciones: Publicar endpoint GET de notificaciones y validar respuesta HTTP 200.
 ```
 
 ---
