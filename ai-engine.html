@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#071D49">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css?v=8">
+<link rel="stylesheet" href="assets/styles.css?v=9">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -40,10 +40,11 @@
     <thead><tr><th>Uso</th><th>Model ID</th><th>Parámetros</th></tr></thead>
     <tbody>
       <tr><td>Transcripción literal <code>es-CO</code></td><td><code>mistral.voxtral-small-24b-2507</code></td><td>Converse API, audio WAV, <code>temperature 0</code>, <code>maxTokens 600</code>, read timeout 6 s</td></tr>
-      <tr><td>Agente de intención y urgencia</td><td><code>us.amazon.nova-lite-v1:0</code></td><td>Converse API, <code>temperature 0</code>, <code>maxTokens 400</code>, read timeout 2,5 s</td></tr>
+      <tr><td>Agente de intención y urgencia</td><td><code>us.amazon.nova-lite-v1:0</code></td><td>Converse API, <code>temperature 0</code>, <code>maxTokens 400</code>, límite total 3 s (read timeout 2,5 s)</td></tr>
     </tbody>
   </table></div>
-  <p>Ambos se configuran en Terraform (<code>BEDROCK_MODEL_ID</code>, <code>BEDROCK_AUDIO_MODEL_ID</code>). IAM concede <code>bedrock:InvokeModel</code> solo a esos ARN. Si un modelo no está disponible, el motor sigue respondiendo con sus reglas.</p>
+  <p>Nova Lite devuelve un JSON con las 5 señales (<code>solicitud_dinero</code>, <code>solicitud_datos</code>, <code>urgencia_alta</code>, <code>secreto_exigido</code>, <code>suplantacion_declarada</code>), sus <code>evidencias</code>, un <code>puntaje_riesgo</code> de 0 a 1 y una <code>justificacion</code>. El nivel no lo decide el modelo: lo fija el orquestador.</p>
+  <p>Ambos se configuran en Terraform (<code>BEDROCK_MODEL_ID</code>, <code>BEDROCK_AUDIO_MODEL_ID</code>). IAM concede <code>bedrock:InvokeModel</code> solo a esos ARN. El respaldo de reglas cubre a <strong>Nova Lite</strong>: si tarda más de 3 s o falla, expresiones regulares analizan la transcripción. No cubre a Voxtral: sin transcripción no hay texto que analizar y solo cuenta la heurística acústica.</p>
 
   <h2 id="pipeline">Pipeline de una evaluación</h2>
   <p>Elige un escenario: el paquete recorre el camino real de una evaluación, incluido el fallback.</p>
@@ -101,7 +102,7 @@ FORMATO DE RESPUESTA: responde ÚNICAMENTE con un objeto JSON válido, sin texto
   <div class="grid">
     <div class="card"><h3>3,0 s</h3><p>Presupuesto total del LLM, incluido <strong>un</strong> reintento. Un timeout agota el presupuesto y degrada de inmediato.</p></div>
     <div class="card"><h3>Suelo de reglas</h3><p>Aunque el LLM responda bien, las señales finales son el <strong>OR</strong> de LLM y regex, y el puntaje el <strong>máximo</strong>. Un texto que intente engañar al modelo no puede bajar lo que detectan las reglas.</p></div>
-    <div class="card"><h3>Fallback regex</h3><p>Sin LLM, con texto vacío, timeout, error o respuesta inválida: expresiones regulares sobre texto normalizado, ajustadas a modismos colombianos. El resultado informa el motivo de degradación.</p></div>
+    <div class="card"><h3>Fallback regex</h3><p>Reemplaza a Nova Lite si tarda más de 3 s, da error o responde fuera del esquema: expresiones regulares sobre la transcripción normalizada, ajustadas a modismos colombianos. El resultado informa el motivo de degradación.</p></div>
   </div>
   <div class="table-wrap"><table>
     <thead><tr><th>Parámetro</th><th>Valor</th></tr></thead>
@@ -115,11 +116,11 @@ FORMATO DE RESPUESTA: responde ÚNICAMENTE con un objeto JSON válido, sin texto
   </table></div>
 
   <h2 id="heuristica">Heurística acústica: RMS y ZCR</h2>
-  <div class="callout"><p>Análisis acústico ligero en tiempo real mediante extracción estadística de energía (RMS) y cruces por cero (ZCR), optimizado para baja latencia en móvil.</p></div>
+  <div class="callout"><p>Heurística estadística en el gateway: energía (RMS) y cruces por cero (ZCR) de cada fragmento. Sirve para comparar con la huella vocal del contacto y para marcar una voz demasiado plana como posible voz sintética; no es un detector entrenado de deepfakes.</p></div>
   <ul>
     <li><strong>Entrada:</strong> PCM16 mono 16 kHz, máx. 60 s, ventanas de 20 ms; se descartan ventanas con RMS &lt; 0,005 y se exigen al menos 10 ventanas útiles.</li>
     <li><strong>Huella vocal:</strong> RMS medio, ZCR medio y varianza de RMS. Similitud = 0,4·RMS + 0,4·ZCR + 0,2·varianza (cercanía relativa). Score de biometría = 1 − similitud.</li>
-    <li><strong>Anti-spoofing:</strong> si el coeficiente de variación del RMS &lt; 0,05 <em>y</em> la varianza del ZCR &lt; 1e-5, la voz es "plana" y se marca como sintética (score 0,95).</li>
+    <li><strong>Voz plana (posible voz sintética):</strong> si el coeficiente de variación del RMS &lt; 0,05 <em>y</em> la varianza del ZCR &lt; 1e-5, la voz es "plana" y se marca como sintética (score 0,95).</li>
     <li><strong>Evolución:</strong> embeddings de locutor y un modelo anti-spoofing entrenado (ver <a href="scope.html#evolucion">Evolución del producto</a>).</li>
   </ul>
 
@@ -127,13 +128,13 @@ FORMATO DE RESPUESTA: responde ÚNICAMENTE con un objeto JSON válido, sin texto
   <ul>
     <li><strong>Reglas duras (RED, score 100):</strong> <code>desafio_fallido</code>, <code>dinero_mas_urgencia</code>, <code>clonacion_vocal</code>, <code>suplantacion_biometrica</code> (similitud &lt; 0,70 con identidad familiar declarada).</li>
     <li><strong>Fusión:</strong> 0,60 intención + 0,40 biometría, pero <em>asimétrica</em>: la biometría solo puede subir el riesgo, nunca bajarlo.</li>
-    <li><strong>Histéresis:</strong> tras un RED no se vuelve a GREEN antes de 15 s (queda AMBER). Un desafío familiar acertado levanta la alerta de inmediato.</li>
+    <li><strong>Histéresis:</strong> tras un RED, la llamada se mantiene en AMBER durante 15 s antes de volver a GREEN. Acertar la pregunta de desafío la baja a GREEN de inmediato.</li>
     <li><strong>Degradación:</strong> si el orquestador falla internamente, el resultado no baja de AMBER.</li>
   </ul>
   <nav class="pager" aria-label="Páginas"><a class="pager-prev" href="architecture.html" rel="prev"><small><i aria-hidden="true">←</i> Anterior</small><span>Arquitectura</span></a><a class="pager-next" href="security.html" rel="next"><small>Siguiente <i aria-hidden="true">→</i></small><span>Seguridad y calidad</span></a></nav>
 </div></main>
 <footer class="foot">GuardianMesh · Proyecto SWNT 2026-2 · Escuela Colombiana de Ingeniería Julio Garavito</footer>
-<script src="assets/app.js?v=8"></script>
-<script src="assets/scene3d.js?v=8"></script>
+<script src="assets/app.js?v=9"></script>
+<script src="assets/scene3d.js?v=9"></script>
 </body>
 </html>

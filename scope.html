@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#071D49">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css?v=8">
+<link rel="stylesheet" href="assets/styles.css?v=9">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -40,7 +40,7 @@
   <div class="grid">
     <div class="card"><h3>Alto contraste</h3><p>Texto oscuro sobre fondos claros con contraste AA, y tamaño de letra base grande.</p></div>
     <div class="card"><h3>Botones táctiles claros</h3><p>Áreas de toque de 56 px, una acción principal por pantalla y etiquetas en español sencillo.</p></div>
-    <div class="card"><h3>Semáforo que no depende del color</h3><p>Verde, ámbar y rojo siempre llevan texto, ícono, voz y vibración configurables.</p></div>
+    <div class="card"><h3>Semáforo que no depende del color</h3><p>Verde, ámbar y rojo siempre llevan texto e ícono, con lectura por voz en cada cambio de nivel; vibración y alarma sonora solo en rojo.</p></div>
   </div>
   <div class="card ux-card" style="margin-top:16px">
     <p><strong>Prototipo visual completo.</strong> Abre el flujo de pantallas diseñado para el proyecto.</p>
@@ -51,7 +51,7 @@
     <figure class="ux-shot"><a href="assets/img/ux/contactos.webp" target="_blank" rel="noopener" aria-label="Ampliar: Red familiar verificada e invitación"><img src="assets/img/ux/contactos.webp" alt="Contactos con la ventana para invitar a alguien por correo" width="540" height="1169" loading="lazy" decoding="async"></a><figcaption><b>Red familiar verificada e invitación</b>Contactos</figcaption></figure>
     <figure class="ux-shot g"><a href="assets/img/ux/semaforo-verde.webp" target="_blank" rel="noopener" aria-label="Ampliar: Semáforo Verde"><img src="assets/img/ux/semaforo-verde.webp" alt="Llamada en verde: Todo está bien, seguimos analizando la llamada" width="540" height="1169" loading="lazy" decoding="async"></a><figcaption><b>Semáforo Verde</b>Monitoreo silencioso</figcaption></figure>
     <figure class="ux-shot a"><a href="assets/img/ux/semaforo-ambar.webp" target="_blank" rel="noopener" aria-label="Ampliar: Semáforo Ámbar"><img src="assets/img/ux/semaforo-ambar.webp" alt="Llamada en ámbar: Ten cuidado, con la pregunta de seguridad" width="540" height="1169" loading="lazy" decoding="async"></a><figcaption><b>Semáforo Ámbar</b>Alerta y pregunta secreta</figcaption></figure>
-    <figure class="ux-shot r"><a href="assets/img/ux/semaforo-rojo.webp" target="_blank" rel="noopener" aria-label="Ampliar: Semáforo Rojo"><img src="assets/img/ux/semaforo-rojo.webp" alt="Llamada en rojo: Riesgo alto, con botones para avisar o colgar y llamar a Andrea" width="540" height="1169" loading="lazy" decoding="async"></a><figcaption><b>Semáforo Rojo</b>Bloqueo y auxilio inmediato</figcaption></figure>
+    <figure class="ux-shot r"><a href="assets/img/ux/semaforo-rojo.webp" target="_blank" rel="noopener" aria-label="Ampliar: Semáforo Rojo"><img src="assets/img/ux/semaforo-rojo.webp" alt="Llamada en rojo: Riesgo alto, con botones para avisar o colgar y llamar a Andrea" width="540" height="1169" loading="lazy" decoding="async"></a><figcaption><b>Semáforo Rojo</b>Alerta y botón «Avisar»</figcaption></figure>
     <figure class="ux-shot"><a href="assets/img/ux/avisos.webp" target="_blank" rel="noopener" aria-label="Ampliar: Notificación al Familiar Protector"><img src="assets/img/ux/avisos.webp" alt="Avisos de Andrea: Carmen te pidió ayuda" width="540" height="1169" loading="lazy" decoding="async"></a><figcaption><b>Notificación al Familiar Protector</b>Avisos (vista de Andrea)</figcaption></figure>
   </div>
   <p class="callout"><strong>Nota:</strong> estas pantallas y el prototipo corresponden al <em>flujo de diseño UX/UI</em>, distinto de las capturas de la build compilada de Android.</p>
@@ -59,9 +59,9 @@
 
   <h2 id="casos">Casos de uso principales</h2>
   <div class="grid">
-    <div class="card"><h3>Recibir una llamada protegida</h3><p>El usuario protegido acepta una llamada de un contacto y ve el semáforo en tiempo casi real.</p></div>
+    <div class="card"><h3>Recibir una llamada protegida</h3><p>Llamada WebRTC 1:1 P2P de app a app entre cuentas de GuardianMesh, iniciada desde la lista de contactos; quien recibe ve el semáforo casi en tiempo real.</p></div>
     <div class="card"><h3>Verificar a un familiar</h3><p>En ámbar o rojo, responde la pregunta secreta acordada con ese contacto.</p></div>
-    <div class="card"><h3>Avisar a la Red de Confianza</h3><p>Cuelga y avisa a su contacto de confianza; el aviso llega por WebSocket y queda en DynamoDB si está desconectado.</p></div>
+    <div class="card"><h3>Avisar a la Red de Confianza</h3><p>En ámbar o rojo, un toque en «Avisar» notifica a sus contactos de confianza (el aviso es manual); llega por WebSocket y queda en DynamoDB si están desconectados.</p></div>
     <div class="card"><h3>Gestionar contactos</h3><p>Invitar por correo, aceptar, eliminar y marcar hasta 3 contactos de confianza.</p></div>
   </div>
 
@@ -71,7 +71,8 @@
     <section class="card module" aria-labelledby="mod-1">
       <header><span class="module-n" aria-hidden="true">1</span><div><h3 id="mod-1">Red Familiar Verificada y Consentimiento</h3><p>Quién puede llamar, con aceptación de ambas partes.</p></div></header>
       <ul class="hu-list">
-      <li><span class="hu">HU-02</span><div><b>Acceso con Google o correo y contraseña</b><small>Cognito · OAuth 2.0 + PKCE · código de verificación por correo</small></div></li>
+      <li><span class="hu">HU-02</span><div><b>Acceso con Google o correo y contraseña</b><small>Cognito · <code>USER_SRP_AUTH</code> · Google OAuth 2.0 con PKCE S256 · JWT</small></div></li>
+      <li><span class="hu">RF</span><div><b>Autorización de tratamiento de datos (Ley 1581 de 2012)</b><small><code>ConsentGate</code> · <code>PrivacyPolicyScreen</code></small></div></li>
       <li><span class="hu">RF</span><div><b>Invitar por correo y aceptar o rechazar: el vínculo es mutuo solo al aceptar</b><small><code>core/contacts.py</code> · <code>ContactsScreen</code></small></div></li>
       <li><span class="hu">RF</span><div><b>Hasta 3 contactos de confianza</b><small><code>/contacts/trust</code></small></div></li>
       <li><span class="hu">HU-19</span><div><b>Pregunta de seguridad por contacto</b><small><code>SecurityQuestionScreen</code> · <code>/contacts/{id}/security</code></small></div></li>
@@ -83,7 +84,7 @@
       <ul class="hu-list">
       <li><span class="hu">HU-10</span><div><b>Señalización y ciclo de vida de la llamada</b><small><code>core/service.py</code> · <code>useCall.ts</code></small></div></li>
       <li><span class="hu">HU-24</span><div><b>Pantallas de llamada entrante y en curso</b><small><code>CallScreen.tsx</code></small></div></li>
-      <li><span class="hu">HU-25</span><div><b>Indicador de riesgo con motivo en lenguaje simple, voz, vibración y sonido</b><small><code>RiskIndicator.tsx</code></small></div></li>
+      <li><span class="hu">HU-25</span><div><b>Indicador de riesgo con motivo en lenguaje simple y voz; vibración y alarma en rojo</b><small><code>RiskIndicator.tsx</code></small></div></li>
       <li><span class="hu">HU-23</span><div><b>Navegación accesible para la persona adulta mayor</b><small><code>AppShell</code> · <code>CarmenHomeScreen</code></small></div></li>
       <li><span class="hu">HU-26</span><div><b>En ámbar o rojo: colgar y llamar al contacto de confianza</b><small><code>CallProvider.tsx</code></small></div></li>
       <li><span class="hu">RF</span><div><b>Historial con el nivel máximo de riesgo · App Android</b><small><code>/calls/history</code> · Capacitor 8</small></div></li>
@@ -95,7 +96,7 @@
       <li><span class="hu">HU-17</span><div><b>Agente de intención y urgencia con fallback por reglas</b><small><code>guardianmesh_intent/</code></small></div></li>
       <li><span class="hu">HU-16</span><div><b>Orquestador: reglas duras, fusión 60/40 e histéresis de 15 s</b><small><code>orquestador.py</code></small></div></li>
       <li><span class="hu">HU-21</span><div><b>Huella vocal por RMS/ZCR</b><small><code>guardianmesh_voice/analizador.py</code></small></div></li>
-      <li><span class="hu">HU-22</span><div><b>Detección de voz sintética por planitud acústica</b><small><code>guardianmesh_voice/analizador.py</code></small></div></li>
+      <li><span class="hu">HU-22</span><div><b>Heurística de voz plana (posible voz sintética)</b><small><code>guardianmesh_voice/analizador.py</code></small></div></li>
       <li><span class="hu">HU-04</span><div><b>Desafío familiar con HMAC-SHA256 e intentos limitados</b><small><code>guardianmesh_challenge/desafio.py</code></small></div></li>
       <li><span class="hu">HU-20</span><div><b>Pregunta de seguridad durante la llamada de riesgo</b><small><code>SecurityChallenge.tsx</code> · <code>/challenge</code></small></div></li>
       </ul>
@@ -107,11 +108,12 @@
   <div class="table-wrap"><table class="evo">
     <thead><tr><th>Capacidad</th><th>MVP actual</th><th>Proyección</th></tr></thead>
     <tbody>
-      <tr><td>Llamadas</td><td>Audio 1:1 por WebRTC dentro de la app</td><td>Integración con la red telefónica (PSTN)</td></tr>
+      <tr><td>Llamadas</td><td>Audio 1:1 por WebRTC P2P de app a app, desde la lista de contactos</td><td>Integración con la red telefónica (PSTN)</td></tr>
+      <tr><td>Audio en llamada</td><td>Sin altavoz nativo</td><td>Altavoz nativo en Android</td></tr>
       <tr><td>Avisos</td><td>Tiempo real por WebSocket, con entrega al reconectar desde DynamoDB</td><td>Notificaciones push (FCM/APNs) y SMS</td></tr>
-      <tr><td>Análisis de voz</td><td>Análisis acústico RMS/ZCR</td><td>Embeddings de locutor y anti-spoofing entrenado</td></tr>
+      <tr><td>Análisis de voz</td><td>Heurística RMS/ZCR de voz plana</td><td>Embeddings de locutor y anti-spoofing entrenado</td></tr>
       <tr><td>Transcripción</td><td>Fragmentos de ~8 s cada ~6 s, casi en tiempo real</td><td>Streaming continuo</td></tr>
-      <tr><td>Conectividad</td><td>STUN público</td><td>Servidor TURN propio</td></tr>
+      <tr><td>Conectividad</td><td>Solo STUN público, sin servidor TURN</td><td>Servidor TURN propio</td></tr>
       <tr><td>Perímetro</td><td>Throttling, tokens JWT y 3 llaves CMK</td><td>Reglas administradas de AWS WAF</td></tr>
       <tr><td>Despliegue</td><td>Entorno <code>dev</code> completo en <code>us-east-1</code>; identidad, gateway y datos declarados en <code>prod</code></td><td>Señalización, riesgo y avisos en <code>prod</code></td></tr>
       <tr><td>Plataformas</td><td>PWA y Android (APK de prueba y release firmado)</td><td>Publicación en tiendas e iOS</td></tr>
@@ -121,6 +123,6 @@
   <nav class="pager" aria-label="Páginas"><a class="pager-prev" href="security.html" rel="prev"><small><i aria-hidden="true">←</i> Anterior</small><span>Seguridad y calidad</span></a></nav>
 </div></main>
 <footer class="foot">GuardianMesh · Proyecto SWNT 2026-2 · Escuela Colombiana de Ingeniería Julio Garavito</footer>
-<script src="assets/app.js?v=8"></script>
+<script src="assets/app.js?v=9"></script>
 </body>
 </html>

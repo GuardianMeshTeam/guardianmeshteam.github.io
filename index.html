@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#071D49">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css?v=8">
+<link rel="stylesheet" href="assets/styles.css?v=9">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -47,19 +47,19 @@
 
   <h2 id="problema">El problema en Colombia</h2>
   <p>El <strong>vishing</strong> (fraude por llamada de voz) y la <strong>suplantación</strong> de bancos, entidades públicas o familiares ("soy tu nieto", "le hablo de Nequi") se dirigen con frecuencia a adultos mayores. Las tácticas se repiten: pedir dinero o claves, imponer <strong>urgencia</strong>, exigir <strong>secreto</strong> y declararse alguien de confianza.</p>
-  <p>GuardianMesh no depende de que la víctima reconozca el engaño: analiza la llamada en curso y le muestra un semáforo claro, con motivo, voz y vibración.</p>
+  <p>GuardianMesh no depende de que la víctima reconozca el engaño: analiza la llamada en curso y le muestra un semáforo claro, con motivo y lectura por voz; en rojo, además, vibración y alarma.</p>
 
   <h2 id="como-funciona">Cómo funciona</h2>
   <div class="grid">
-    <div class="card"><h3>1. Llamada dentro de la app</h3><p>Audio 1:1 por WebRTC, de dispositivo a dispositivo, entre dos usuarios GuardianMesh.</p></div>
+    <div class="card"><h3>1. Llamada dentro de la app</h3><p>Audio 1:1 por WebRTC P2P, de app a app, entre dos cuentas de GuardianMesh, desde la lista de contactos (solo STUN, sin TURN).</p></div>
     <div class="card"><h3>2. Análisis en casi tiempo real</h3><p>El teléfono de quien <em>recibe</em> envía fragmentos de ~8 s al backend. IA en Amazon Bedrock + reglas determinísticas.</p></div>
-    <div class="card"><h3>3. Semáforo y respuesta</h3><p>En ámbar o rojo puede responder una pregunta secreta familiar o colgar y avisar a su contacto de confianza.</p></div>
+    <div class="card"><h3>3. Semáforo y respuesta</h3><p>En ámbar o rojo puede responder una pregunta secreta familiar, avisar con un toque en «Avisar» a su contacto de confianza o colgar y llamarlo.</p></div>
   </div>
 
   <h2 id="en-accion">GuardianMesh en acción</h2>
   <p>Una persona mayor recibe una llamada, el LLM reconoce la estafa y una llave familiar confirma quién está al otro lado.</p>
   <div class="scene3d" data-scene="riesgo" data-autoplay></div>
-  <p class="s3-note">La celda es una metáfora: en el producto, RED alerta a la persona, que puede colgar y avisar a su Red de Confianza.</p>
+  <p class="s3-note">La celda es una metáfora: en el producto, RED alerta a la persona con voz, vibración y alarma; ella puede avisar con un toque en «Avisar» a su Red de Confianza o colgar y llamarla.</p>
 
   <h2 id="semaforo">Semáforo de riesgo en llamada</h2>
   <div class="traffic">
@@ -67,7 +67,7 @@
     <div class="light a"><b>Ámbar</b><span>40 – 69</span>Señales sospechosas: se activa la pregunta de seguridad.</div>
     <div class="light r"><b>Rojo</b><span>70 – 100</span>Alto riesgo o regla dura (p. ej. dinero + urgencia).</div>
   </div>
-  <p>El color nunca va solo: siempre se acompaña de texto, ícono, voz y vibración configurables. Tras un rojo, la llamada no vuelve a verde antes de 15 s (histéresis).</p>
+  <p>El color nunca va solo: siempre se acompaña de texto e ícono, y la app lee el nivel en voz alta en cada cambio; la vibración y la alarma sonora son solo para rojo. Tras un rojo, la llamada se mantiene en ámbar durante 15 s antes de volver a verde (histéresis); acertar la pregunta de desafío la baja a verde de inmediato.</p>
 
   <h2 id="repos">Los 4 repositorios</h2>
   <p>Cada tarjeta enlaza a la rama <code>development</code>.</p>
@@ -91,7 +91,7 @@
   </div>
 
   <h2 id="mvp">El MVP en una frase</h2>
-  <div class="callout"><p>Llamadas de audio <strong>1:1 por WebRTC dentro de la app</strong>, avisos en tiempo real por <strong>WebSocket + DynamoDB</strong> y desafío familiar protegido con <strong>HMAC-SHA256</strong>. Análisis acústico ligero en tiempo real mediante extracción estadística de energía (RMS) y cruces por cero (ZCR), optimizado para baja latencia en móvil.</p></div>
+  <div class="callout"><p>Llamadas de audio <strong>1:1 por WebRTC dentro de la app</strong>, avisos en tiempo real por <strong>WebSocket + DynamoDB</strong> y desafío familiar protegido con <strong>HMAC-SHA256</strong>. Voxtral transcribe, Nova Lite analiza la intención y unas reglas determinísticas deciden el nivel; una heurística de energía (RMS) y cruces por cero (ZCR) marca la voz demasiado plana como posible voz sintética.</p></div>
   <p>Detalle completo en <a href="scope.html">Alcance y evolución</a>. Mira también el <a href="scope.html#ux">diseño UX/UI y flujo de pantallas</a>.</p>
 
   <h2 id="equipo">Equipo</h2>
@@ -107,7 +107,7 @@
   <nav class="pager" aria-label="Páginas"><a class="pager-next" href="architecture.html" rel="next"><small>Siguiente <i aria-hidden="true">→</i></small><span>Arquitectura</span></a></nav>
 </div></main>
 <footer class="foot">GuardianMesh · Proyecto SWNT 2026-2 · Escuela Colombiana de Ingeniería Julio Garavito</footer>
-<script src="assets/app.js?v=8"></script>
-<script src="assets/scene3d.js?v=8"></script>
+<script src="assets/app.js?v=9"></script>
+<script src="assets/scene3d.js?v=9"></script>
 </body>
 </html>

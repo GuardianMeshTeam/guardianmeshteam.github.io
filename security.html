@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#071D49">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css?v=8">
+<link rel="stylesheet" href="assets/styles.css?v=9">
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -39,16 +39,16 @@
   <div class="table-wrap"><table>
     <thead><tr><th>Control</th><th>Detalle</th></tr></thead>
     <tbody>
-      <tr><td>Identidad</td><td>Amazon Cognito con <strong>Google</strong> como IdP federado (OAuth 2.0 + PKCE) o correo y contraseña (≥ 12 caracteres con mayúscula, minúscula, número y símbolo).</td></tr>
+      <tr><td>Identidad</td><td>Amazon Cognito con dos formas de entrar: <strong>correo y contraseña</strong> con <code>USER_SRP_AUTH</code> (la contraseña no viaja; ≥ 12 caracteres con mayúscula, minúscula, número y símbolo) o <strong>Google</strong> como IdP federado (OAuth 2.0 con PKCE S256). Cognito emite los JWT.</td></tr>
       <tr><td>Verificación del token</td><td>Solo <em>access tokens</em> <strong>RS256</strong> validados por firma contra el <strong>JWKS</strong> del pool, issuer exacto, <code>client_id</code>, <code>token_use=access</code> y expiración. Se rechaza el algoritmo <code>none</code>. Los mismos controles aplican en gateway, señalización y avisos.</td></tr>
-      <tr><td>Claim <code>aal2</code></td><td>Lo añade el trigger pre-token V2_0 solo en inicios de sesión completos; sin él, <code>403 insufficient_aal</code>. Las rutas de riesgo lo vuelven a comprobar (defensa en profundidad).</td></tr>
+      <tr><td>Consentimiento</td><td>Autorización explícita de tratamiento de datos (Ley 1581 de 2012) antes de usar la app, también para quien entra con Google; la política es pública en <code>/privacidad</code> y la autorización puede revocarse en Ajustes.</td></tr>
       <tr><td>Identidad confiable</td><td>El gateway descarta cualquier cabecera de usuario del cliente y la reemplaza por una derivada del <code>sub</code> verificado.</td></tr>
       <tr><td>Aislamiento</td><td>Estado, desafíos y huellas se indexan por <code>sub</code> y solo con contactos <strong>aceptados</strong>.</td></tr>
       <tr><td>Android</td><td>Los tokens viven en el Keystore mediante <code>Capacitor Secure Storage</code>, no en <code>localStorage</code>. Solo HTTPS, <code>allowMixedContent=false</code> y backups desactivados.</td></tr>
       <tr><td>Anti-enumeración</td><td>Invitar por correo responde siempre igual; <code>forbidden</code> es idéntico para "no participante" y "no existe".</td></tr>
     </tbody>
   </table></div>
-  <div class="callout"><p>El claim <code>aal2</code> certifica que la sesión completó un inicio de sesión admitido (Google o correo y contraseña). El gateway, la señalización y los avisos lo exigen.</p></div>
+  <div class="callout"><p>Cognito es la única autoridad de identidad: emite los JWT y el gateway, la señalización y los avisos los validan contra el JWKS del pool.</p></div>
 
   <h2 id="privacidad">Privacidad Zero-Storage</h2>
   <ul>
@@ -71,12 +71,12 @@
   <div class="table-wrap"><table>
     <thead><tr><th>Cat.</th><th>Amenaza</th><th>Control implementado</th></tr></thead>
     <tbody>
-      <tr><td><strong>S</strong> Suplantación</td><td>Token falsificado o de otro pool; llamante que se hace pasar por un familiar</td><td>RS256 + JWKS + issuer/client; <code>aal2</code>; biometría RMS/ZCR (umbral 0,70) y desafío HMAC; el emisor siempre es la conexión autenticada</td></tr>
+      <tr><td><strong>S</strong> Suplantación</td><td>Token falsificado o de otro pool; llamante que se hace pasar por un familiar</td><td>RS256 + JWKS + issuer/client; huella vocal RMS/ZCR (similitud mínima 0,70) y desafío HMAC-SHA256; el emisor siempre es la conexión autenticada</td></tr>
       <tr><td><strong>T</strong> Manipulación</td><td>Prompt injection en la transcripción; alteración de mensajes WebSocket</td><td>Delimitadores y eliminación de etiquetas, suelo de reglas OR/máx., validación JSON Schema; eventos validados y SDP opaco</td></tr>
       <tr><td><strong>R</strong> Repudio</td><td>Negar una alerta o un aviso</td><td>Historial por participante y avisos con <code>senderId</code> verificado, con TTL</td></tr>
       <tr><td><strong>I</strong> Divulgación</td><td>Fuga de audio, transcripciones o tokens; enumeración de cuentas</td><td>Zero-Storage, logs redactados, 3 CMK, respuestas uniformes, aislamiento por <code>sub</code></td></tr>
       <tr><td><strong>D</strong> Denegación</td><td>Inundación de evaluaciones o llamadas; costo de IA descontrolado</td><td>Límites por usuario antes de invocar modelos, tope de 60 s de audio, throttling 50 rps/100 ráfaga, concurrencia reservada, timeout de timbre 30 s</td></tr>
-      <tr><td><strong>E</strong> Elevación</td><td>Saltarse AAL2 o leer datos de otro usuario</td><td>Política única en el núcleo; <code>AAL2_OPT_OUT_PATHS</code> no puede cubrir llamadas ni contactos; IAM de mínimo privilegio y modelos Bedrock fijados por ARN</td></tr>
+      <tr><td><strong>E</strong> Elevación</td><td>Entrar sin sesión válida o leer datos de otro usuario</td><td>Política única en el núcleo que exige JWT en todo <code>/api/v1</code>; las rutas de llamadas y contactos no pueden excluirse por configuración; IAM de mínimo privilegio y modelos Bedrock fijados por ARN</td></tr>
     </tbody>
   </table></div>
 
@@ -87,7 +87,9 @@
       <tr><td>Secretos en todo el historial</td><td>Gitleaks</td></tr>
       <tr><td>Seguridad de la IaC</td><td>Checkov</td></tr>
       <tr><td>Dependencias vulnerables</td><td>pip-audit (infra) y <code>npm audit --omit=dev</code> (front)</td></tr>
-      <tr><td>Calidad y SAST de Python</td><td>ruff (incluye reglas <code>S</code> de bandit), shellcheck, yamllint</td></tr>
+      <tr><td>Pruebas del front</td><td>Vitest, <code>tsc -b</code> y build en el CI del front</td></tr>
+      <tr><td>Calidad y SAST de Python</td><td>ruff (incluye reglas <code>S</code> de bandit), shellcheck, yamllint en el CI de infraestructura</td></tr>
+      <tr><td>Pruebas de infraestructura</td><td>pytest con cobertura ≥ 80 % en el CI de infraestructura</td></tr>
       <tr><td>Terraform</td><td><code>terraform fmt</code>, tflint, <code>validate</code>; pruebas contra el schema del provider</td></tr>
       <tr><td>Despliegue sin llaves</td><td>GitHub Actions con <strong>OIDC</strong> (sin access keys), rol de plan de solo lectura y rol de apply; <code>prod</code> con aprobación y solo desde <code>main</code>; acciones fijadas por SHA</td></tr>
     </tbody>
@@ -99,16 +101,16 @@
     <thead><tr><th>Atributo</th><th>Evidencia</th></tr></thead>
     <tbody>
       <tr><td>Seguridad</td><td>Controles de las secciones anteriores; pruebas de contrato del verificador de tokens y de aislamiento por usuario</td></tr>
-      <tr><td>Fiabilidad y disponibilidad</td><td>Degradación controlada (LLM → regex; orquestador ≥ AMBER); PITR en DynamoDB; fallos de publicación o historial no alteran la respuesta; Scheduler con borrado automático</td></tr>
+      <tr><td>Fiabilidad y disponibilidad</td><td>Degradación controlada: si Nova Lite tarda más de 3 s o falla, reglas regex analizan la transcripción (el respaldo no cubre a Voxtral); si falla el orquestador, el nivel nunca baja de AMBER; PITR en DynamoDB; fallos de publicación o historial no alteran la respuesta; Scheduler con borrado automático</td></tr>
       <tr><td>Eficiencia / FinOps</td><td>Serverless on-demand, TTL, límites antes de invocar IA, <code>temperature 0</code>, 400/600 tokens, modelos pequeños</td></tr>
-      <tr><td>Mantenibilidad</td><td>Arquitectura hexagonal, <code>mypy</code> con <code>disallow_untyped_defs</code>, ruff, cobertura ≥ 80 % bloqueante en communications e infra, TypeScript <code>tsc -b</code>; 39 archivos de test en api, 19 en communications, 49 en front y 14 en infra</td></tr>
+      <tr><td>Mantenibilidad</td><td>Arquitectura hexagonal; tipado con <code>mypy</code> (<code>disallow_untyped_defs</code>) y TypeScript <code>tsc -b</code>. En CI: Vitest en el front; ruff, validación de Terraform y pytest (cobertura ≥ 80 %) en infraestructura</td></tr>
       <tr><td>Portabilidad</td><td>Mismo núcleo en FastAPI local y Lambda; PWA y Android desde el mismo código</td></tr>
-      <tr><td>Usabilidad</td><td>Color siempre acompañado de texto, voz y vibración; áreas de toque de 56 px; contraste AA</td></tr>
+      <tr><td>Usabilidad</td><td>Color siempre acompañado de texto e ícono; lectura por voz en cada cambio de nivel; vibración y alarma sonora únicamente en rojo; áreas de toque de 56 px; contraste AA</td></tr>
     </tbody>
   </table></div>
   <nav class="pager" aria-label="Páginas"><a class="pager-prev" href="ai-engine.html" rel="prev"><small><i aria-hidden="true">←</i> Anterior</small><span>Motor de IA</span></a><a class="pager-next" href="scope.html" rel="next"><small>Siguiente <i aria-hidden="true">→</i></small><span>Alcance y evolución</span></a></nav>
 </div></main>
 <footer class="foot">GuardianMesh · Proyecto SWNT 2026-2 · Escuela Colombiana de Ingeniería Julio Garavito</footer>
-<script src="assets/app.js?v=8"></script>
+<script src="assets/app.js?v=9"></script>
 </body>
 </html>

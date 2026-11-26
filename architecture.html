@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#071D49">
 <script>(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t)})()</script>
 <link rel="icon" type="image/png" href="assets/logo-guardianmesh.png">
-<link rel="stylesheet" href="assets/styles.css?v=8">
+<link rel="stylesheet" href="assets/styles.css?v=9">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
 <body>
@@ -40,7 +40,7 @@
   <p>Los repositorios de backend separan tres capas. El mismo núcleo se ejecuta en un servidor local y en AWS Lambda; no hay una segunda implementación de la política "para Lambda".</p>
   <div class="grid">
     <div class="card"><h3><code>core</code></h3><p>Dominio puro: sin boto3, HTTP ni frameworks. Los puertos son <code>typing.Protocol</code>. Un test (<code>test_core_purity.py</code>) lo verifica.</p></div>
-    <div class="card"><h3><code>adapters</code></h3><p>DynamoDB, Bedrock, Secrets Manager, API Gateway Management API, EventBridge Scheduler, SES y versiones en memoria.</p></div>
+    <div class="card"><h3><code>adapters</code></h3><p>DynamoDB, Bedrock, Secrets Manager, API Gateway Management API, EventBridge Scheduler y versiones en memoria.</p></div>
     <div class="card"><h3><code>interfaces</code></h3><p>Transporte: handler de Lambda (HTTP API v2 y WebSocket) y servidores locales (FastAPI en api; <code>local_server</code> en communications).</p></div>
   </div>
   <div class="callout"><p><strong>Decisión clave:</strong> la Lambda valida el JWT; API Gateway solo enruta (no hay <code>aws_apigatewayv2_authorizer</code>). Una sola implementación de la política evita divergencias silenciosas.</p></div>
@@ -49,11 +49,12 @@
   <div class="table-wrap"><table>
     <thead><tr><th>Pieza</th><th>Servicio</th><th>Detalle</th></tr></thead>
     <tbody>
-      <tr><td>Identidad</td><td>Amazon Cognito</td><td>Tier ESSENTIALS, Google como IdP, access token 60 min, trigger pre-token V2_0 (<code>aal: "aal2"</code>)</td></tr>
+      <tr><td>Identidad</td><td>Amazon Cognito</td><td>Tier ESSENTIALS; correo y contraseña con <code>USER_SRP_AUTH</code> y Google OAuth 2.0 con PKCE S256; emite JWT (access token 60 min)</td></tr>
       <tr><td>API HTTP</td><td>API Gateway HTTP API + Lambda</td><td>Python 3.12, 1024 MB, 10 s, CORS <code>GET, POST, OPTIONS</code></td></tr>
       <tr><td>Señalización</td><td>API Gateway WebSocket + 2 Lambdas</td><td>256 MB, 15 s; timeout de timbre con EventBridge Scheduler</td></tr>
       <tr><td>Avisos</td><td>API Gateway WebSocket + Lambda</td><td>Entrega en vivo y pendientes en DynamoDB</td></tr>
-      <tr><td>IA</td><td>Amazon Bedrock (Converse API)</td><td><code>us.amazon.nova-lite-v1:0</code> y <code>mistral.voxtral-small-24b-2507</code></td></tr>
+      <tr><td>IA</td><td>Amazon Bedrock (Converse API)</td><td><code>mistral.voxtral-small-24b-2507</code> transcribe (límite 6 s); <code>us.amazon.nova-lite-v1:0</code> analiza la intención (límite 3 s)</td></tr>
+      <tr><td>Llamadas</td><td>WebRTC 1:1 P2P</td><td>De app a app entre cuentas de GuardianMesh, desde la lista de contactos; solo STUN público, sin servidor TURN y sin altavoz nativo</td></tr>
       <tr><td>Datos</td><td>DynamoDB on-demand</td><td>PITR, TTL <code>expires_at</code>, cifrado con CMK <code>pii</code></td></tr>
       <tr><td>Secretos y claves</td><td>Secrets Manager + KMS</td><td>3 CMK: <code>pii</code>, <code>secrets</code>, <code>logs</code></td></tr>
     </tbody>
@@ -62,14 +63,14 @@
 
   <h2 id="componentes">Diagrama de componentes (C4)</h2>
   <p>Modelo C4 dibujado con la librería oficial de draw.io. El nivel 2 muestra los contenedores desplegados; el nivel 3 abre el gateway y sus componentes de código.</p>
-  <figure class="c4" id="c4-contenedores" data-src="assets/diagrams/c4-contenedores.svg">
+  <figure class="c4" id="c4-contenedores" data-src="assets/diagrams/c4-contenedores.svg?v=9">
     <div class="c4-bar"><strong>Nivel 2 · Contenedores</strong><span><button type="button" data-z="-" aria-label="Alejar">−</button><button type="button" data-z="+" aria-label="Acercar">+</button><button type="button" data-z="0">Ajustar</button><button type="button" data-z="full">Pantalla completa</button></span></div>
-    <div class="c4-view"><img src="assets/diagrams/c4-contenedores.svg" alt="Diagrama C4 de contenedores de GuardianMesh"></div>
+    <div class="c4-view"><img src="assets/diagrams/c4-contenedores.svg?v=9" alt="Diagrama C4 de contenedores de GuardianMesh"></div>
     <figcaption>Pasa el cursor sobre un elemento para ver sus relaciones; acerca y arrastra para moverte.</figcaption>
   </figure>
-  <figure class="c4" id="c4-componentes" data-src="assets/diagrams/c4-componentes.svg">
+  <figure class="c4" id="c4-componentes" data-src="assets/diagrams/c4-componentes.svg?v=9">
     <div class="c4-bar"><strong>Nivel 3 · Componentes del gateway</strong><span><button type="button" data-z="-" aria-label="Alejar">−</button><button type="button" data-z="+" aria-label="Acercar">+</button><button type="button" data-z="0">Ajustar</button><button type="button" data-z="full">Pantalla completa</button></span></div>
-    <div class="c4-view"><img src="assets/diagrams/c4-componentes.svg" alt="Diagrama C4 de componentes de GuardianMesh"></div>
+    <div class="c4-view"><img src="assets/diagrams/c4-componentes.svg?v=9" alt="Diagrama C4 de componentes de GuardianMesh"></div>
     <figcaption>Pasa el cursor sobre un elemento para ver sus relaciones; acerca y arrastra para moverte.</figcaption>
   </figure>
   <p><a href="assets/diagrams/guardianmesh-c4.drawio" download>Descargar el archivo editable (.drawio)</a></p>
@@ -113,6 +114,7 @@ sequenceDiagram
   S-->>A: call:ended
   S-->>B: call:ended
   </pre></div>
+  <div class="callout"><p><strong>En el teléfono de quien recibe:</strong> lectura por voz en cada cambio de nivel; vibración y alarma sonora únicamente en rojo. El aviso a la Red de Confianza es manual: un toque en el botón «Avisar» envía el <code>POST /notifications</code>.</p></div>
 
   <h2 id="estados">Máquinas de estado</h2>
   <p>Las dos máquinas son interactivas: los botones muestran únicamente las transiciones válidas del estado actual.</p>
@@ -121,7 +123,7 @@ sequenceDiagram
   <details class="s3-table"><summary>Ver tabla de transiciones</summary><div class="table-wrap"><table><thead><tr><th>Desde</th><th>Evento</th><th>Hacia</th></tr></thead><tbody><tr><td><code>inicio</code></td><td><code>call:init</code></td><td><code>ringing</code></td></tr><tr><td><code>inicio</code></td><td>ocupado o no disponible</td><td><code>ended</code></td></tr><tr><td><code>ringing</code></td><td><code>call:accept</code></td><td><code>accepted</code></td></tr><tr><td><code>ringing</code></td><td><code>call:reject</code></td><td><code>rejected</code></td></tr><tr><td><code>ringing</code></td><td>30 s sin respuesta</td><td><code>timeout</code></td></tr><tr><td><code>ringing</code></td><td>cuelga o se desconecta</td><td><code>ended</code></td></tr><tr><td><code>accepted</code></td><td>hangup o desconexión</td><td><code>ended</code></td></tr><tr><td><code>accepted</code></td><td>falla WebRTC</td><td><code>failed</code></td></tr></tbody></table></div></details>
   <h3>Nivel de riesgo</h3>
   <div class="scene3d" data-scene="riesgo"></div>
-  <p class="s3-note">La celda es una metáfora: en el producto, RED alerta a la persona, que puede colgar y avisar a su Red de Confianza.</p>
+  <p class="s3-note">La celda es una metáfora: en el producto, RED alerta a la persona con voz, vibración y alarma; ella puede avisar con un toque en «Avisar» a su Red de Confianza o colgar y llamarla.</p>
   <details class="s3-table"><summary>Ver tabla de transiciones</summary><div class="table-wrap"><table><thead><tr><th>Desde</th><th>Evento</th><th>Hacia</th></tr></thead><tbody><tr><td><code>GREEN</code></td><td>score 40 a 69 (si el desafío no está verificado)</td><td><code>AMBER</code></td></tr><tr><td><code>GREEN</code></td><td>regla dura o score 70+</td><td><code>RED</code></td></tr><tr><td><code>AMBER</code></td><td>regla dura, score 70+ o desafío fallido</td><td><code>RED</code></td></tr><tr><td><code>AMBER</code></td><td>score bajo</td><td><code>GREEN</code></td></tr><tr><td><code>AMBER</code></td><td>desafío familiar acertado</td><td><code>GREEN</code></td></tr><tr><td><code>RED</code></td><td>score 40 a 69</td><td><code>AMBER</code></td></tr><tr><td><code>RED</code></td><td>score bajo antes de 15 s (histéresis)</td><td><code>AMBER</code></td></tr><tr><td><code>RED</code></td><td>score bajo tras 15 s</td><td><code>GREEN</code></td></tr><tr><td><code>RED</code></td><td>desafío familiar acertado</td><td><code>GREEN</code></td></tr></tbody></table></div></details>
   <p>Las transiciones de la llamada son condicionales en DynamoDB: gana el primer escritor. Las reglas duras (<code>desafio_fallido</code>, <code>dinero_mas_urgencia</code>, <code>clonacion_vocal</code>, <code>suplantacion_biometrica</code>) fuerzan RED con score 100.</p>
 
@@ -154,12 +156,11 @@ sequenceDiagram
   </section>
 
   <h2 id="endpoints">Endpoints HTTP</h2>
-  <p>Todas las rutas <code>/api/v1/*</code> exigen <code>Authorization: Bearer</code> con <code>aal2</code>, salvo las públicas.</p>
+  <p>Todas las rutas <code>/api/v1/*</code> exigen un JWT de Cognito en <code>Authorization: Bearer</code>.</p>
   <div class="table-wrap"><table>
     <thead><tr><th>Método</th><th>Ruta</th><th>Descripción</th></tr></thead>
     <tbody>
       <tr><td>GET</td><td><code>/healthz</code></td><td>Liveness (pública)</td></tr>
-      <tr><td>POST</td><td><code>/api/v1/auth/registration/verification-code</code> · <code>/verify-code</code></td><td>Código de verificación por SES (públicas)</td></tr>
       <tr><td>GET</td><td><code>/api/v1/contacts</code></td><td>Lista de contactos</td></tr>
       <tr><td>GET · POST</td><td><code>/api/v1/contacts/invitations</code></td><td>Listar / crear invitación</td></tr>
       <tr><td>POST</td><td><code>/api/v1/contacts/invitations/accept</code> · <code>/reject</code> · <code>/contacts/remove</code> · <code>/contacts/trust</code></td><td>Gestión de contactos (máx. 3 de confianza)</td></tr>
@@ -189,10 +190,10 @@ sequenceDiagram
   <nav class="pager" aria-label="Páginas"><a class="pager-prev" href="index.html" rel="prev"><small><i aria-hidden="true">←</i> Anterior</small><span>Visión general</span></a><a class="pager-next" href="ai-engine.html" rel="next"><small>Siguiente <i aria-hidden="true">→</i></small><span>Motor de IA</span></a></nav>
 </div></main>
 <footer class="foot">GuardianMesh · Proyecto SWNT 2026-2 · Escuela Colombiana de Ingeniería Julio Garavito</footer>
-<script src="assets/app.js?v=8"></script>
-<script src="assets/diagrams/c4-svg.js?v=8"></script>
-<script src="assets/c4-viewer.js?v=8"></script>
-<script src="assets/scene3d.js?v=8"></script>
-<script type="module" src="assets/demo-3d.js?v=8"></script>
+<script src="assets/app.js?v=9"></script>
+<script src="assets/diagrams/c4-svg.js?v=9"></script>
+<script src="assets/c4-viewer.js?v=9"></script>
+<script src="assets/scene3d.js?v=9"></script>
+<script type="module" src="assets/demo-3d.js?v=9"></script>
 </body>
 </html>

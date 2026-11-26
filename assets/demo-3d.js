@@ -15,7 +15,7 @@ const STEPS = [
   { attacker: 10, victim: 10, title: 'Pretexto de emergencia', state: 'Monitoreo activo', level: 'g',
     text: 'El atacante simula un choque y pide 10 millones de pesos con urgencia mientras el motor evalúa el contexto.' },
   { attacker: 23.2, victim: 23.2, title: 'Detección de Riesgo Alto', state: 'Semáforo Rojo', level: 'r',
-    text: 'La IA detecta presión financiera y voz sospechosa: la pantalla cambia a Riesgo Alto y habilita el botón de auxilio.' },
+    text: 'La IA detecta presión financiera y urgencia: la pantalla cambia a Riesgo Alto, avisa por voz, vibra y habilita el botón «Avisar».' },
   { attacker: 30, victim: 30, title: 'Notificación a Persona de Confianza', state: 'Aviso enviado', level: 'r',
     text: "Al pulsar 'Avisar', la persona de confianza recibe la alerta inmediata en su panel de Avisos." }
 ];
