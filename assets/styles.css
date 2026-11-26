@@ -279,8 +279,3 @@ tbody tr:hover td{background:var(--ice)}
 [data-theme="dark"] .btn-doc{border-color:var(--primary)}
 @media (max-width:639px){.hero-actions,.doc-actions{flex-direction:column}.doc-actions{width:100%}.doc-card>div,.doc-card>.doc-actions{flex:none}.doc-card{flex-direction:column;align-items:stretch}}
 
-/* Descarga del APK */
-.apk-qr{display:flex;gap:24px;align-items:center;margin:20px 0 0;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-.apk-qr img{flex:none;width:168px;height:168px;border-radius:14px;border:1px solid var(--border)}
-.apk-qr h2{margin:0 0 6px;padding:0;font-size:1.2rem}.apk-qr p{margin:4px 0;color:var(--text-2)}
-@media (max-width:560px){.apk-qr{flex-direction:column;text-align:center}}
