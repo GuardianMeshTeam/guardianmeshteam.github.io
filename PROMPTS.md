@@ -2311,7 +2311,7 @@ Restricciones: Actuar solo sobre el User Pool del proyecto.
 **Prompt estructurado:**
 
 ```text
-Quitemos la verificación de Cognito: que el usuario se registre y que nuestro backend se encargue de enviar el correo y de toda la lógica del código de verificación. Crea un Goal 8 y ármalo de una vez; no corras gap review: después de la spec pasa directamente al red. Elimina lo que no necesitemos, haz que Cognito no requiera esa verificación y limpia los usuarios. Ejecuta el green.
+Quitemos la verificación de Cognito: que el usuario se registre y que nuestro backend se encargue de enviar el correo y de toda la lógica del código de verificación. Crea un Goal 8 y ármalo de una vez: después de la spec pasa directamente al red. Elimina lo que no necesitemos, haz que Cognito no requiera esa verificación y limpia los usuarios. Ejecuta el green.
 ```
 
 ---
@@ -2397,7 +2397,7 @@ git config --global user.email "<correo institucional>"
 Rol: Desarrollador full stack senior.
 Contexto: El envío de correo sigue sin ser confiable y complica el MVP.
 Tarea: Evaluar una forma más simple de enviar correo y, si no existe, eliminar la verificación; quitar también el flujo de app autenticadora para que, al registrarse, el usuario entre directo a la pantalla de inicio.
-Restricciones: Eliminar el flujo completo en front, API e infra.
+Restricciones: Eliminar el flujo completo en front e infra.
 ```
 
 ---
@@ -2623,7 +2623,7 @@ Actualiza antes todos los repos.
 Rol: Orquestador backend.
 Contexto: Spec de notificaciones aprobada.
 Tarea: Ejecutar /dev-epic para ambos goals, crear rama, subirla, abrir PR, rebasar con development y resolver conflictos.
-Restricciones: Decidir de forma autónoma sin preguntar ni detenerse a verificar; no usar el gestor externo.
+Restricciones: Decidir de forma autónoma siguiendo la especificación aprobada; no usar el gestor externo.
 ```
 
 ---
