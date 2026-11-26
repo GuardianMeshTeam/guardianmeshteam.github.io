@@ -1,5 +1,3 @@
-> *Nota de curaduría: los prompts fueron estandarizados bajo la estructura Rol, Contexto, Tarea y Restricciones (cada ficha incluye los apartados que aplican) para documentar la construcción del MVP.*
-
 # Bitácora de Prompts — Felipe Eduardo Calvache Gallego
 
 - **Responsable:** Felipe Eduardo Calvache Gallego
@@ -3075,6 +3073,551 @@ Contexto: Con riesgo rojo no aparece el formulario.
 Tarea: Explicar la causa y verificar si el contacto de prueba tiene pregunta registrada.
 Restricciones: Informar lo que no se puede consultar desde el servidor.
 ```
+
+---
+
+# Bitácora de Prompts — David Salamanca
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorios / Capas trabajadas:** `GuardianMesh-front` (PWA React 19 + Vite + TypeScript, APK con Capacitor) · Diseño UI/UX
+- **Herramientas y modelos utilizados:** Claude Code (Claude Opus 5.5)
+- **Asignatura:** SWNT 2026-2
+
+---
+
+## Tabla resumen
+
+| ID | Módulo / Archivo | Título técnico | Herramienta y modelo | Entregable real generado |
+|---|---|---|---|---|
+| PRM-DS-01 | `components/call/*`, `screens/carmen/CallDemoScreen` | HU-24 · Pantalla de llamada con botones grandes desde Figma | Claude Code (Claude Opus 5.5) | PR #3: llamada entrante y en curso, botones de al menos 72 px, 11 pruebas nuevas (170 en verde) |
+| PRM-DS-02 | Git / GitHub / Jira | HU-24 · Integración del PR y cierre de la historia | Claude Code (Claude Opus 5.5) | PR #3 fusionado (base HU-23) y SCRUM-32 en Finalizado |
+| PRM-DS-03 | `components/risk/types.ts`, plan de trabajo | HU-25 · Análisis del contrato de riesgo y plan de tareas | Claude Code (Claude Opus 5.5) | Plan HU-25 (T-25.1 a T-25.4) alineado al catálogo de eventos propuesto en la HU-30 |
+| PRM-DS-04 | `components/risk/*` | HU-25 · Indicador de riesgo con color, ícono, texto, voz, vibración y sonido | Claude Code (Claude Opus 5.5) | PR #5: 26 pruebas nuevas (196 en verde), demo Verde → Ámbar → Rojo |
+| PRM-DS-05 | Git / GitHub / Jira | HU-25 · PR, revisión por pares y seguimiento en Jira | Claude Code (Claude Opus 5.5) | PR #5 con revisor; comentario en SCRUM-33; historia en Finalizado tras el merge |
+| PRM-DS-06 | `src/` (todo el front) | Auditoría y cobertura funcional del front frente al backend | Claude Code (Claude Opus 5.5) | PR #10: HU-19 (pregunta de seguridad) y HU-26 (colgar y llamar), ajustes de avisos |
+| PRM-DS-07 | `components/risk/lab/*` | Revisión y fusión del PR de laboratorio de riesgo | Claude Code (Claude Opus 5.5) | PR #9 revisado (pruebas, tipos, build y APK) y fusionado |
+| PRM-DS-08 | Lienzo de diseño (propuesta A) | Mockups "Ambient Glass" y viabilidad de sonidos de llamada | Claude Code (Claude Opus 5.5) | Mockups de la propuesta A y análisis de sonidos con Web Audio |
+| PRM-DS-09 | Lienzo de diseño (propuesta B) | Propuesta "Liquid Glass" basada en las guías de Apple | Claude Code (Claude Opus 5.5) | Mockups de la propuesta B (aprobada) |
+| PRM-DS-10 | `styles/design-system.css`, `services/callSounds.ts` | Implementación del sistema de diseño Liquid Glass y sonidos | Claude Code (Claude Opus 5.5) | PR #11 y PR #12 |
+| PRM-DS-11 | `.env` (local) | Configuración de variables de entorno `VITE_*` | Claude Code (Claude Opus 5.5) | Entorno local configurado; llamada WebRTC validada de punta a punta |
+| PRM-DS-12 | Git / GitHub / Jira | Integración: push, PR y cierre de tareas en Jira | Claude Code (Claude Opus 5.5) | PR con revisor asignado; SCRUM-33 en Finalizado |
+| PRM-DS-13 | `development`, documentación | Verificación de integración, manual de identidad y despliegue en iPhone | Claude Code (Claude Opus 5.5) | PR #12 (reintegra cambios a `development`), manual de identidad visual, recomendación de despliegue |
+| PRM-DS-14 | `screens/carmen/CarmenHomeScreen.tsx` | Saludo con el nombre de la cuenta | Claude Code (Claude Opus 5.5) | PR #13 |
+| PRM-DS-15 | Lienzo de diseño · Contactos | Rediseño de la tarjeta de contacto con acciones de ícono y FAB | Claude Code (Claude Opus 5.5) | Mockups de Contactos e Invitar (aprobados) |
+| PRM-DS-16 | Lienzo de diseño · Historial y Avisos | Historial, panel de avisos y aviso al contacto de confianza | Claude Code (Claude Opus 5.5) | Mockups de Historial, Avisos y llamada en Ámbar/Rojo |
+| PRM-DS-17 | `services/alerts.ts`, `HistoryScreen`, `AlertsScreen`, `ContactsScreen`, `RiskLabPanel` | Implementación de Historial, Avisos y rediseño de Contactos | Claude Code (Claude Opus 5.5) | PR #14 (453 pruebas en verde) |
+| PRM-DS-18 | `ContactsScreen.tsx`, `design-system.css` | Hoja de invitar superpuesta a la barra inferior | Claude Code (Claude Opus 5.5) | Commits `b8b8576` y `a034d88`; PR #15 |
+| PRM-DS-19 | Git / GitHub | Verificación de integración en `development` | Claude Code (Claude Opus 5.5) | Detección de commits fuera del merge y PR #15 |
+| PRM-DS-20 | `services/dataConsent.ts`, `routes/ConsentGate.tsx`, `PrivacyPolicyScreen.tsx` | Autorización de tratamiento de datos (Ley 1581 de 2012) | Claude Code (Claude Opus 5.5) | PR #31 (597 pruebas en verde) |
+| PRM-DS-21 | PR #30 (logo oficial) | Revisión de PR de una compañera y orden de integración | Claude Code (Claude Opus 5.5) | Informe de revisión: checks, conflictos, prueba de integración conjunta |
+
+---
+
+## Listado cronológico de prompts
+
+### `PRM-DS-01` · HU-24 · Pantalla de llamada con botones grandes desde Figma
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Implementar la HU-24 (SCRUM-32): que una adulta mayor pueda contestar y colgar sin confusiones.
+
+**Prompt estructurado:**
+
+```text
+Rol: Desarrollador frontend senior con enfoque en accesibilidad para adultos mayores.
+Contexto: Tengo asignada la HU-24 (SCRUM-32, Sprint 1, 5 puntos): "Como usuaria adulta mayor,
+quiero una pantalla de llamada con botones táctiles grandes de contestar y colgar para operar sin
+confusiones". El diseño está en Figma (pantallas 03, 04 y 05, en mi copia del archivo GuardianMesh)
+y el esqueleto PWA viene de la HU-23 (PR #1 de Felipe).
+Tarea: Implementar en GuardianMesh-front la llamada entrante (T-24.1: nombre y relación del
+contacto o "Número desconocido", botones Contestar y Colgar grandes) y la llamada en curso
+(T-24.2: tiempo, altavoz y colgar). Dejar la pantalla lista para que la T-24.3 conecte los
+estados reales y un espacio para el indicador de riesgo de la HU-25. Incluir una ruta de
+demostración.
+Restricciones: La pantalla solo dibuja: recibe el estado y avisa las acciones por callbacks.
+Tamaños táctiles y de texto por encima del Figma cuando la accesibilidad lo exija, documentando
+cada diferencia. No incluir controles que no estén en la historia. Usar Jira y el Figma como
+fuente de verdad. Pruebas con Vitest + Testing Library y build en verde.
+```
+
+**Entregable:** PR #3 `feature/HU-24-pantalla-llamada` (commits `f918d0f`, `cf34b41`, `2789d48`): botones de al menos 72 px, foco en Colgar al contestar, `riskSlot` para la HU-25, ruta de demostración (hoy `/dashboard/llamada`) y 11 pruebas nuevas (170 en verde).
+
+---
+
+### `PRM-DS-02` · HU-24 · Integración del PR y cierre de la historia
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front` · Jira
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Integrar la HU-24 respetando la dependencia con la HU-23 y cerrar la historia en el tablero.
+
+**Prompt estructurado:**
+
+```text
+Rol: Ingeniero de software responsable de la integración.
+Contexto: La HU-24 depende del esqueleto de la HU-23 (PR #1 de Felipe), que aún está en revisión.
+Tarea: Abrir el PR de la HU-24 con descripción de lo incluido, las diferencias con el Figma y las
+pruebas. Cuando se apruebe el PR de Felipe, integrar ambos en development y pasar SCRUM-32 a
+Finalizado.
+Restricciones: Esperar la aprobación del PR de Felipe antes de avanzar con mi parte. Commits con
+mi identidad siguiendo Conventional Commits.
+```
+
+**Entregable:** PR #3 fusionado el 6 de noviembre, con la base de la HU-23 (PR #1) incluida; SCRUM-32 en Finalizado.
+
+---
+
+### `PRM-DS-03` · HU-25 · Análisis del contrato de riesgo y plan de tareas
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Definir el alcance de la HU-25 y alinear el front con el contrato de eventos del backend antes de programar.
+
+**Prompt estructurado:**
+
+```text
+Rol: Desarrollador frontend senior.
+Contexto: Tengo asignada la HU-25 (SCRUM-33, Sprint 2, 5 puntos): "Como usuaria en llamada,
+quiero recibir alertas visuales, textuales y sonoras del nivel de riesgo (Verde/Ámbar/Rojo) para
+actuar a tiempo". El catálogo de eventos del backend está propuesto en una rama de trabajo de GuardianMesh-api (HU-30).
+Tarea: Revisar la historia, sus tareas en Jira y el catálogo de eventos; armar un plan de trabajo
+que separe lo que me corresponde (T-25.1, T-25.3, T-25.4) de lo que depende de otros integrantes
+(T-25.2, WebSocket) o de otras historias.
+Restricciones: Niveles y códigos de motivo iguales a los del catálogo; si no existe un evento
+exacto, mapear el más cercano sin inventar contratos. No tocar el backend.
+```
+
+**Entregable:** Plan de trabajo de la HU-25 (tareas, responsables y fuera de alcance) y adaptador `fromFraudAlertEvent` para los códigos de motivo de `FraudAlertTriggeredEvent`. En la llamada, el riesgo llega hoy por el evento `risk:update` de la señalización.
+
+---
+
+### `PRM-DS-04` · HU-25 · Indicador de riesgo con color, ícono, texto y avisos
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Mostrar el nivel de riesgo durante la llamada de forma que se entienda sin depender solo del color.
+
+**Prompt estructurado:**
+
+```text
+Rol: Desarrollador frontend senior con enfoque en accesibilidad.
+Contexto: Plan de la HU-25 aprobado. Diseño en Figma (pantallas 05, 13 y 06). La pantalla de
+llamada de la HU-24 tiene un espacio reservado para el indicador.
+Tarea: Implementar T-25.1 (banner Verde/Ámbar/Rojo con color, ícono y texto, lectura en voz alta
+al cambiar de nivel y anuncio a lectores de pantalla), T-25.3 (motivo en lenguaje simple por
+código) y T-25.4 (vibración y sonido una sola vez al pasar a Rojo, según preferencias). Dejar una
+interfaz RiskFeed para que la T-25.2 conecte el WebSocket, una fuente simulada y una demo.
+Restricciones: Nunca comunicar el riesgo solo con color. Preferencias simuladas hasta la HU-05.
+Fuera de alcance: colgar y llamar (HU-26), pregunta de seguridad (HU-20), Red de Confianza (HU-28)
+y WebSocket real. Pruebas y build en verde.
+```
+
+**Entregable:** PR #5 `feature/HU-25-indicador-riesgo` (commits `b266961`, `54b6a14`, `2c22a27`): `RiskIndicator`, `riskCopy`, `riskEffects`, `riskFeeds`; demo con `?riesgo=` (hoy en `/dashboard/llamada`); 26 pruebas nuevas (196 en verde).
+
+---
+
+### `PRM-DS-05` · HU-25 · PR, revisión por pares y seguimiento en Jira
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front` · Jira
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Integrar la HU-25 con revisión de un compañero y dejar trazabilidad en Jira.
+
+**Prompt estructurado:**
+
+```text
+Rol: Ingeniero de software responsable de la integración.
+Contexto: La HU-25 está implementada en mi clon local con pruebas, typecheck y build en verde.
+Tarea: Abrir el PR hacia development asignado a mí y con Felipe como revisor, comentar en SCRUM-33
+lo hecho y lo pendiente (T-25.2 de Miguel, validación de textos con María Paula), y mover la
+historia a En revisión; tras el merge, a Finalizado.
+Restricciones: Commits con mi identidad siguiendo Conventional Commits.
+```
+
+**Entregable:** PR #5 fusionado el 8 de noviembre; comentario de seguimiento en SCRUM-33; historia en Finalizado.
+
+---
+
+### `PRM-DS-06` · Auditoría y cobertura funcional del front
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Identificar qué funcionalidades del backend no tenían interfaz en el front y cubrirlas sin modificar el backend.
+
+**Prompt estructurado:**
+
+```text
+Rol: Desarrollador frontend senior del equipo GuardianMesh.
+Contexto: El front (React 19 + Vite + TypeScript, PWA y APK con Capacitor) debe reflejar todo lo
+que ya exponen GuardianMesh-api y GuardianMesh-communications. Mi labor acordada con el equipo es
+revisar el front, terminar lo pendiente y dejarlo a nivel profesional. No trabajo el backend.
+Tarea: Trabajar en dos fases. Fase 1: auditar el front contra los endpoints y eventos disponibles
+(riesgo, desafío, seguridad de contactos, señalización) e implementar lo que falte para tener el
+100 % de cobertura funcional. Fase 2: refactor de identidad visual y pantallas.
+Restricciones: No proponer cambios ni flujos nuevos en el backend; adaptarse a lo que ya existe.
+Mantener la estructura del repositorio y sus convenciones. Donde el backend aún no exista, mostrar
+estados vacíos honestos en lugar de datos simulados. Todo cambio debe pasar typecheck, pruebas y
+build. Usar como fuente de verdad Jira y los entornos vigentes.
+```
+
+**Entregable:** PR #10 `feature/carmen-seguridad-y-ajustes` (HU-19 pregunta de seguridad desde Contactos, HU-26 "Colgar y llamar", Ajustes de avisos de voz, vibración y sonido).
+
+---
+
+### `PRM-DS-07` · Revisión y fusión del PR de laboratorio de riesgo
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Integrar el trabajo de un compañero (cliente de la API de riesgo y laboratorio) antes de continuar, verificando que no rompiera nada.
+
+**Prompt estructurado:**
+
+```text
+Rol: Revisor de código del equipo (dueño de la organización GuardianMeshTeam).
+Contexto: Un compañero abrió en GuardianMesh-front el PR #9 (feature/risk-lab) con el cliente de la
+API de riesgo, la captura del audio remoto, el evento call:transcript y el laboratorio de riesgo.
+Tarea: Revisar el PR, verificar el estado de los checks (pruebas, typecheck, build y APK de debug)
+y, si está estable, aprobarlo y fusionarlo en development desde aquí.
+Restricciones: No modificar el código del compañero. Respetar la decisión del equipo: el laboratorio
+de riesgo solo se activa con VITE_RISK_LAB=true.
+```
+
+**Entregable:** PR #9 revisado (411 pruebas, typecheck, build y dos APK en verde) y fusionado en `development`.
+
+---
+
+### `PRM-DS-08` · Mockups "Ambient Glass" y viabilidad de sonidos
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front` (diseño)
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Diseñar y validar visualmente la nueva identidad antes de tocar código.
+
+**Prompt estructurado:**
+
+```text
+Rol: Diseñador de producto UI/UX con criterio de accesibilidad para adultos mayores.
+Contexto: Necesito empezar el refactor visual de GuardianMesh-front manteniendo la cobertura
+funcional total. Adjunto mi propuesta e instrucción de diseño ("Ambient Glass": glassmorphism,
+degradados ambientales azul, celeste y cian, tipografía Inter) e imágenes de referencia.
+Tarea: Generar primero los mockups de las pantallas principales con la herramienta de diseño,
+de forma consistente con el repositorio. Confirmar si es viable implementar sonidos para las
+llamadas (entrante, en espera, conexión, colgado).
+Restricciones: La accesibilidad está por encima de lo decorativo. Mockups antes de implementar.
+Ser consistente con las pantallas y flujos que ya existen.
+```
+
+**Entregable:** Mockups de la propuesta A (Ambient Glass) y confirmación técnica de sonidos con Web Audio, sin archivos de audio.
+
+---
+
+### `PRM-DS-09` · Propuesta "Liquid Glass" basada en las guías de Apple
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front` (diseño)
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Iterar el diseño hacia un lenguaje visual profesional y comparar dos alternativas.
+
+**Prompt estructurado:**
+
+```text
+Rol: Diseñador UI/UX especializado en el lenguaje visual de Apple (Human Interface Guidelines).
+Contexto: La propuesta A me gustó. Quiero una segunda alternativa para comparar.
+Tarea: Guardar la propuesta A como alternativa y generar una propuesta B con estas consideraciones:
+efecto Liquid Glass, animaciones de hover y de transición entre pantallas, inspiración 100 % en
+Apple, íconos profesionales y colores más fáciles de digerir para los niveles de alerta.
+Restricciones: Mantener la paleta del proyecto. Las alertas deben comunicarse siempre con color,
+ícono y texto. Respetar reducir movimiento, reducir transparencia y aumentar contraste.
+```
+
+**Entregable:** Mockups de la propuesta B (Liquid Glass), aprobada para implementación.
+
+---
+
+### `PRM-DS-10` · Implementación del sistema de diseño Liquid Glass y sonidos
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Llevar la propuesta aprobada a código sin perder funcionalidad.
+
+**Prompt estructurado:**
+
+```text
+Rol: Desarrollador frontend senior.
+Contexto: Se aprobó la propuesta B (Liquid Glass).
+Tarea: Implementarla en GuardianMesh-front considerando la disponibilidad real de funciones del
+backend: tokens de diseño en design-system.css, tipografía Inter empaquetada, íconos de licencia
+abierta, pantalla de llamada con fondo por nivel de riesgo, y sonidos de la llamada con un
+interruptor en Ajustes.
+Restricciones: Vidrio solo en navegación y controles; el contenido sobre superficies claras.
+Textos en español de Colombia. No usar recursos con licencias restringidas a plataformas Apple.
+Actualizar las pruebas afectadas; typecheck, pruebas y build en verde.
+```
+
+**Entregable:** PR #11 (`feature/refactor-visual`) y PR #12 (integración en `development`); `services/callSounds.ts`.
+
+---
+
+### `PRM-DS-11` · Configuración de variables de entorno
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Conectar el front local con los servicios desplegados para probar una llamada real.
+
+**Prompt estructurado:**
+
+```text
+Rol: Ingeniero de software a cargo del entorno de desarrollo.
+Contexto: Tengo los valores de Cognito (user pool y client), la URL de la API, la URL del
+WebSocket de señalización, los servidores ICE y los contactos de demostración.
+Tarea: Configurar el archivo .env local de GuardianMesh-front con esas variables VITE_*.
+Restricciones: Solo identificadores públicos (nunca secretos). El .env no se versiona; la
+referencia es .env.example.
+```
+
+**Entregable:** Entorno local configurado; llamada WebRTC validada de punta a punta por el responsable.
+
+---
+
+### `PRM-DS-12` · Integración: push, PR y cierre en Jira
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front` · Jira
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Integrar el trabajo validado y mantener el tablero de Scrum al día.
+
+**Prompt estructurado:**
+
+```text
+Rol: Ingeniero de software responsable de la integración.
+Contexto: Validé que la llamada funciona correctamente con los cambios de las fases 1 y 2.
+Tarea: Subir las ramas, abrir los PR hacia development con descripción en español y revisor
+asignado, y actualizar mis tareas relacionadas en Jira marcándolas como hechas.
+Restricciones: Commits con mi identidad (David Salamanca) siguiendo Conventional Commits. El
+desarrollo y los commits se hacen en mi clon local.
+```
+
+**Entregable:** PR #10 y #11 abiertos con revisor; SCRUM-33 (HU-25) en Finalizado.
+
+---
+
+### `PRM-DS-13` · Verificación de integración, manual de identidad y despliegue en iPhone
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front` · `Documentación`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Confirmar que los cambios quedaron en `development`, documentar la identidad visual y evaluar la distribución en iOS.
+
+**Prompt estructurado:**
+
+```text
+Rol: Líder técnico del front.
+Contexto: Los PR de las fases 1 y 2 fueron revisados por el equipo.
+Tarea: (1) Validar que los PR se aprobaron y que todos los cambios están en development.
+(2) Preparar un manual de identidad visual del producto. (3) Evaluar si conviene desplegar el
+front para abrirlo en Safari y crear el acceso directo en iPhone.
+Restricciones: Basar la verificación en el historial real de ramas y merges. El manual debe
+reflejar los tokens y componentes implementados, no los del mockup.
+```
+
+**Entregable:** Se detectó que el PR #11 se fusionó en una rama intermedia y se corrigió con el PR #12; manual de identidad visual; recomendación sobre la PWA en iOS.
+
+---
+
+### `PRM-DS-14` · Saludo con el nombre de la cuenta
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Eliminar un dato de ejemplo que quedó en la pantalla de inicio.
+
+**Prompt estructurado:**
+
+```text
+Rol: Desarrollador frontend.
+Contexto: La pantalla de inicio saluda "Hola, Carmen" (dato de ejemplo), mientras que las
+tarjetas de contacto ya usan el nombre derivado de cada cuenta.
+Tarea: Corregir la inconsistencia para que el saludo use el nombre de la cuenta en sesión.
+Restricciones: Reutilizar la misma función de nombres de los contactos. Si no hay nombre,
+saludar solo con "Hola". Agregar o ajustar la prueba correspondiente.
+```
+
+**Entregable:** PR #13 `fix/saludo-usuario`.
+
+---
+
+### `PRM-DS-15` · Rediseño de la tarjeta de contacto
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front` (diseño)
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Reducir la carga visual de la tarjeta de contacto sin perder acciones.
+
+**Prompt estructurado:**
+
+```text
+Rol: Diseñador UI/UX.
+Contexto: La tarjeta de contacto tiene cuatro botones de texto y el formulario de invitar está
+siempre visible.
+Tarea: Actualizar el mockup: el botón Llamar se mantiene como acción principal; marcar de
+confianza (check), pregunta de seguridad (escudo) y eliminar (papelera) pasan a ser íconos;
+invitar a alguien se convierte en un botón "+" flotante abajo a la derecha que abre el
+formulario solo al tocarlo. Mostrar el resultado antes de implementar.
+Restricciones: Mantener la confirmación antes de eliminar y las etiquetas accesibles de cada
+acción.
+```
+
+**Entregable:** Mockups de Contactos y de la hoja de Invitar, aprobados.
+
+---
+
+### `PRM-DS-16` · Historial, avisos y aviso al contacto de confianza
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front` (diseño)
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Definir con el equipo las nuevas pantallas antes de que exista el backend.
+
+**Prompt estructurado:**
+
+```text
+Rol: Diseñador UI/UX.
+Contexto: El panel de Andrea no tiene un propósito claro. El equipo implementará en el backend un
+historial de llamadas y me pidió hacer la implementación inicial del front; ellos ajustarán
+cuando lo tengan.
+Tarea: Agregar al lienzo de diseño (1) una pantalla de historial de llamadas, (2) un panel de
+notificaciones y (3) en la llamada, cuando el usuario esté siendo estafado, una acción para
+notificar a su contacto de confianza; esa notificación llega al panel de notificaciones.
+Restricciones: Ser consistente con lo ya implementado (tokens, componentes, navegación).
+```
+
+**Entregable:** Mockups de Historial, Avisos y llamada en Ámbar/Rojo con "Avisar a…".
+
+---
+
+### `PRM-DS-17` · Implementación de Historial, Avisos y rediseño de Contactos
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Llevar a código los mockups aprobados en PRM-DS-15 y PRM-DS-16.
+
+**Prompt estructurado:**
+
+```text
+Rol: Desarrollador frontend senior.
+Contexto: Los mockups de Contactos, Historial, Avisos y "Avisar a mi contacto de confianza" están
+aprobados. El backend de historial y avisos todavía no existe.
+Tarea: Implementarlos y dejar el PR en el repositorio: servicio services/alerts.ts con el
+contrato propuesto, pantallas HistoryScreen y AlertsScreen, campana de avisos en la barra
+superior, navegación Inicio · Historial · Contactos · Ajustes, acciones de ícono y botón flotante
+con hoja inferior en Contactos, y "Avisar a {contacto}" en la llamada en Ámbar o Rojo.
+Restricciones: Seguir los nombres del catálogo de eventos (FraudAlertTriggeredEvent,
+AlertAcknowledgedEvent). Si la ruta no existe (404/405/501), mostrar un estado vacío y no un
+error. Conservar las etiquetas accesibles para no romper las pruebas existentes. Cerrar la tarea
+completa en esta iteración.
+```
+
+**Entregable:** PR #14 `feature/historial-avisos` (16 archivos, 453 pruebas en verde, build sin errores). El historial consume hoy `/api/v1/calls/history` y los avisos, `/api/v1/notifications`.
+
+---
+
+### `PRM-DS-18` · Hoja de invitar superpuesta a la barra inferior
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Corregir un defecto visual detectado en la prueba manual del PR #14.
+
+**Prompt estructurado:**
+
+```text
+Rol: Desarrollador frontend.
+Contexto: En la prueba manual (capturas adjuntas) la hoja "Invitar a alguien" queda detrás de la
+barra de navegación inferior, el botón Invitar no se ve y el botón "+" se asoma sobre el campo de
+correo. Tras un primer ajuste el error persiste.
+Tarea: Corregir la superposición para lograr consistencia visual y dejar los cambios listos.
+Restricciones: No alterar el flujo de invitación ni sus pruebas.
+```
+
+**Entregable:** Commits `b8b8576` (z-index y botón "+" oculto con la hoja abierta) y `a034d88` (hoja renderizada con portal sobre toda la app); integrados con el PR #15.
+
+---
+
+### `PRM-DS-19` · Verificación de integración en `development`
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Confirmar que las correcciones llegaron a la rama de integración.
+
+**Prompt estructurado:**
+
+```text
+Rol: Ingeniero de software responsable de la integración.
+Contexto: Se subieron correcciones a la rama del PR #14.
+Tarea: Confirmar si todos los cambios ya quedaron en development.
+Restricciones: Comprobarlo con el historial de Git (ancestros de development), no solo con el
+estado del PR.
+```
+
+**Entregable:** Se detectó que el PR #14 se fusionó antes de las correcciones; se abrió el PR #15 `fix/hoja-invitar` con revisor asignado.
+
+---
+
+### `PRM-DS-20` · Autorización de tratamiento de datos personales (Ley 1581 de 2012)
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Cumplir en la interfaz con el régimen colombiano de protección de datos personales.
+
+**Prompt estructurado:**
+
+```text
+Rol: Desarrollador frontend senior con conocimiento del régimen colombiano de protección de datos.
+Contexto: GuardianMesh trata datos personales y datos sensibles (voz y huella vocal). Por ley
+debe obtener la autorización del titular. Nuestro alcance es el frontend y es informativo: basta
+con anunciar correctamente la información y registrar la elección.
+Tarea: Implementar en el front la "Autorización de tratamiento de datos" según la Ley 1581 de
+2012 y el Decreto 1377 de 2013: autorización previa en el registro, pantalla de autorización tras
+iniciar sesión (cubre el ingreso con Google), política de tratamiento pública y opciones en
+Ajustes. Avisar cuando el PR esté en GitHub.
+Restricciones: No tocar nada del backend. Mantener la consistencia técnica con la estructura del
+proyecto (servicios en services/, guardas en routes/, componentes en components/, pruebas junto a
+cada archivo, README y .env.example actualizados). Casillas sin marcar; la autorización de datos
+sensibles separada y opcional. No dañar la implementación actual.
+```
+
+**Entregable:** PR #31 `feature/autorizacion-datos`: `services/dataConsent.ts`, `routes/ConsentGate.tsx`, `components/consent/ConsentFields.tsx`, `PrivacyPolicyScreen` en `/privacidad`, sección Privacidad en Ajustes, README y `VITE_PRIVACY_EMAIL`. 52 archivos de prueba y 597 pruebas en verde. Sin cambios en los repositorios de backend.
+
+---
+
+### `PRM-DS-21` · Revisión de PR de una compañera y orden de integración
+
+- **Responsable:** David Eduardo Salamanca Aguilar
+- **Repositorio / Capa:** `GuardianMesh-front`
+- **Herramienta y modelo:** Claude Code (Claude Opus 5.5)
+- **Objetivo técnico:** Decidir el orden de merge de dos PR abiertos sin introducir regresiones.
+
+**Prompt estructurado:**
+
+```text
+Rol: Revisor de código del equipo.
+Contexto: Están abiertos el PR #30 de María Paula (logo oficial en web y Android) y mi PR #31.
+Tarea: Revisar el PR #30 y decir si es estable para aceptarlo antes del mío.
+Restricciones: Revisar checks de CI, conflictos con development, el diff de código y de recursos
+(íconos PWA y Android), y probar la integración conjunta de ambos PR (pruebas y build).
+```
+
+**Entregable:** Informe de revisión: checks en verde, sin conflictos, integración conjunta con 597 pruebas en verde; observaciones sobre el script de íconos y el color del logo; orden recomendado #30 y luego #31.
 
 ---
 
